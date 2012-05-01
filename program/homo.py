@@ -1,4 +1,6 @@
 from random import randint
+from random import randrange
+from random import choice
 
 def mods(x,n):
    # this is our symmetric modulou
@@ -26,6 +28,9 @@ def genKey(P):
    k = k-((k%2)-1)
    return k
 
+def decrypt(L,p):
+    return map(lambda x: mods(x,p) % 2,L)
+
 def makeEncrypt(N,Q):
    def makeEncryptBit(N,Q):
       Mn,Mx = bitLims(N)
@@ -34,10 +39,9 @@ def makeEncrypt(N,Q):
    
    F = makeEncryptBit(N,Q)
    return (lambda L,p : [F(x,p) for x in L])
+   
+   
 
-
-def decrypt(L,p):
-    return map(lambda x: mods(x,p) % 2,L)
 
 
 
@@ -152,25 +156,63 @@ Security_Param = 64
 S1 = "a"
 S2 = "c aa "
 
-testSearch(Security_Param,S1,S2)
+#testSearch(Security_Param,S1,S2)
+
+
+
 
 ## AsymKeyGen
-def asymKeyGen():
-    N,P,Q=getNPQ(8)
-    x=[]
-    q=genKey(2**64)
-    for i in range(N):
-            x.append(0)
-    y=makeEncrypt(N,Q)(x,q)
-    return q,y
+def asymKeyGen(S):
+    N,P,Q=getNPQ(S)
+    
+    x=[0]*N
+    private=genKey(P)
+    
+    encrypt = makeEncrypt(N,Q)
+    public = encrypt(x,private)
+    
+    return private, public, encrypt
+
+def fheKeyGen(S):
+    private, public, encrypt = asymKeyGen(S)
+    Alpha, Beta = int(sqrt(S)), S
+    x = 1.0/private
+    
+    SparseSubset = []
+    Hint = []
+    S = []
+    
+    for i in range(Alpha-1):
+        SparseSubset.append(randrange(0,x))
+        x = x - SparseSubset[-1]
+    li.append(x)
+    
+    for i in range(Beta-Alpha):
+        Hint.append(randrange(0,2))
+    
+    for i in SparseSubset:
+        index=randint(0,len(hint))
+        Hint.insert(index,i)
+        
+    for i in SparseSubset:
+        S.append(Hint.index(i))
+   
+   return (public,Hint),(private,S),encrypt
+
+
+"""
 def randomSubsetSum (pKeyList):
     s=0
     lp=random.randint(1,len(pkeyList))
-    for i in range(lp)
+    for i in range(lp):
       s+=pKeyList(i)
     return s
-    
+
 def asymEncrypt(P,Q):
      #Use AsymKeyGen to make a private key and a secret key list
      #choose random elements from public key list and sum them
      #If this sum mod sk is stll
+
+"""
+
+

@@ -4,6 +4,8 @@
 \usepackage{amsmath,amsthm,amssymb}
 \usepackage{epstopdf}
 \usepackage{xspace}
+%\usepackage{sagetex}
+
 
 \newcommand{\Bold}{\mathbf}
 
@@ -12,4 +14,19 @@
 
 \begin{document}
 \maketitle
+
+\begin{multicols}{2}
+\begin{slide}{Abstract}
+
+We present a formal inquiry of the first fully homomorphic encryption scheme proposed by Craig Gentry in 2008. Moreover we introduce the first implementation of this cipher in the Python programming language. A fully homomorphic encryption scheme enables the execution of arbitrary operations on encrypted data without the decryption key which, put simply, allows for a third party to  store and manipulate sensitive information without the ability to interpret it. 
+\parskip 1em
+
+The applications of an efficient fully homomorphic encryption system are potentially limitless. A contemporary example is cloud based email, where a decentralized server stores and serves encrypted user email. Furthermore, such a system would allow for users to request the server to perform search queries on stored data without loss of privacy. This is a particularly enticing scenario given the recent boom in portable devices and multiparty computation, both of which currently have serious security concerns. 
+
+Our investigation includes a high level synopsis of the mathematics involved in fully homomorphic encryption, a complete demonstration of our implementation in Python, and finally a overview of the space and asymptotic time complexities of the proposed system. 
+\end{slide}
+
+\begin{slide}{ABC}
+\end{slide}
+\end{multicols}
 \end{document}

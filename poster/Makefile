@@ -1,7 +1,7 @@
 
 default: homo.tex
-	# latex -no-shell-escape eposter.tex
-	# sage eposter.sage
+	#latex -no-shell-escape homo.tex
+	#sage homo.sagetex.sage
 	latex -shell-escape homo.tex
 	dvips homo.dvi
 	ps2pdf homo.ps
