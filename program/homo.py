@@ -1,6 +1,10 @@
 from random import randint
-from random import randrange
+from random import random
 from random import choice
+import math
+
+##Changelog Bitlims was returning bit shifts instead of powers.
+
 
 def mods(x,n):
    # this is our symmetric modulou
@@ -10,7 +14,7 @@ def mods(x,n):
    else: return b
 
 
-##  Initialization Tools  ##
+## Initialization Tools ##
 
 def getNPQ(N):
     # N is a security parameter
@@ -20,11 +24,13 @@ def getNPQ(N):
 
 
 def bitLims(B):
-    return (2^(B-1),(2^B)-1)
+    return (2**(B-1),(2**B)-1)
 
 def genKey(P):
    kn,kx = bitLims(P)
    k = randint(kn,kx)
+   #print "k b4"
+   #print k
    k = k-((k%2)-1)
    return k
 
@@ -43,9 +49,9 @@ def makeEncrypt(N,Q):
    
 
 
+#Helper Binary Array and Integer Functions
 
-
-## Bit Operations ## 
+## Bit Operations ##
 def bxor(a,b):
     return a+b
 
@@ -73,23 +79,23 @@ def mynot(L1):
    return map(lambda x: bnot(x),L1)
 
 
-## Complex Operators ## 
+## Complex Operators ##
 def myadd(L1,L2):
    def carry(A,B,C):
       # This is the carry logic that clark
-      #   provided for the adder
+      # provided for the adder
       return A*B+A*C+B*C
    
-   # apparently reverse() is an in-place 
-   #   side-effects driven procedure 
+   # apparently reverse() is an in-place
+   # side-effects driven procedure
    #
-   # also the carry bit gets way out of 
-   #   controle. There should be a moduluo
-   #   however I have not gotten to that.
+   # also the carry bit gets way out of
+   # controle. There should be a moduluo
+   # however I have not gotten to that.
    Z = zip(L1,L2)
-   Z.reverse() 
+   Z.reverse()
    # the reverse is needed to preserve the
-   #   endian of this data. 
+   # endian of this data.
    C = [0]
       
    for x in Z:
@@ -106,23 +112,23 @@ def search(L1,L2,acc,Zeros):
     if len(L2)<len(L1):
         return acc
     
-    List = myxor(L1,L2) 
+    List = myxor(L1,L2)
     Zeros[-1]= bnot(reduce(lambda x,y: bor(x,y),List))
     acc = myadd(acc,Zeros)[1:]
     
     return search(L1,L2[8:],acc,Zeros)
 
 
-## Userland Helper Operations ## 
+## Userland Helper Operations ##
 
 def a2b(a):
    ai = ord(a)
-   return ''.join('01'[(ai >> x) & 1] for x in xrange(7, -1, -1)) 
+   return ''.join('01'[(ai >> x) & 1] for x in xrange(7, -1, -1))
 
 def strBin(s):
     def a2b(a):
         ai = ord(a)
-        return ''.join('01'[(ai >> x) & 1] for x in xrange(7, -1, -1)) 
+        return ''.join('01'[(ai >> x) & 1] for x in xrange(7, -1, -1))
     
     def split_len(seq):
         
@@ -144,11 +150,11 @@ def testSearch(Secure,S1,S2):
     K2= K
     bit1 = strBin(S1)
     bit2 = strBin(S2)
-    enc1,enc2  = encrypt(bit1,K),encrypt(bit2,K)
-    acc  = encrypt([0]*(len(enc2)//8),K)
+    enc1,enc2 = encrypt(bit1,K),encrypt(bit2,K)
+    acc = encrypt([0]*(len(enc2)//8),K)
     zero = acc[:]
     encs = search(enc1,enc2,acc,zero)
-    print "  ",decrypt(encs,K)
+    print " ",decrypt(encs,K)
 
 
 
@@ -161,21 +167,13 @@ S2 = "c aa "
 
 
 
+
 ## AsymKeyGen
-def asymKeyGen(S):
-    N,P,Q=getNPQ(S)
-    
-    x=[0]*N
-    private=genKey(P)
-    
-    encrypt = makeEncrypt(N,Q)
-    public = encrypt(x,private)
-    
-    return private, public, encrypt
+
 
 def fheKeyGen(S):
     private, public, encrypt = asymKeyGen(S)
-    Alpha, Beta = int(sqrt(S)), S
+    Alpha, Beta = int(math.sqrt(S)), S
     x = 1.0/private
     
     SparseSubset = []
@@ -183,36 +181,34 @@ def fheKeyGen(S):
     S = []
     
     for i in range(Alpha-1):
-        SparseSubset.append(randrange(0,x))
+        SparseSubset.append(random()*x)
         x = x - SparseSubset[-1]
-    li.append(x)
+    SparseSubset.append(x)
     
     for i in range(Beta-Alpha):
-        Hint.append(randrange(0,2))
+        Hint.append(random()*2)
     
     for i in SparseSubset:
-        index=randint(0,len(hint))
+        index=randint(0,len(Hint))
         Hint.insert(index,i)
         
     for i in SparseSubset:
         S.append(Hint.index(i))
-   
-   return (public,Hint),(private,S),encrypt
+    
+    return (public,Hint),(private,S),encrypt
 
 
 """
 def randomSubsetSum (pKeyList):
-    s=0
-    lp=random.randint(1,len(pkeyList))
-    for i in range(lp):
-      s+=pKeyList(i)
-    return s
+s=0
+lp=random.randint(1,len(pkeyList))
+for i in range(lp):
+s+=pKeyList(i)
+return s
 
 def asymEncrypt(P,Q):
-     #Use AsymKeyGen to make a private key and a secret key list
-     #choose random elements from public key list and sum them
-     #If this sum mod sk is stll
+#Use AsymKeyGen to make a private key and a secret key list
+#choose random elements from public key list and sum them
+#If this sum mod sk is stll
 
 """
-
-
