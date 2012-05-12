@@ -5,6 +5,7 @@
 \usepackage{epstopdf}
 \usepackage{xspace}
 %\usepackage{sagetex}
+\usepackage{circuitikz}
 
 \newcommand{\Bold}{\mathbf}
 
@@ -58,6 +59,28 @@ In order for a cryptographic system to be considered \fh we need to make some cl
 
 
 We may need to additionally ad information about Rings, Prime Ideals, this can be added later. There are likely other definitions that are needed, and will likely be found as the ones above are addressed
+\end{slide}
+
+\begin{slide}{Circuit probably moved}
+\begin{circuitikz}\draw
+(0,0) node[and port,scale=2.5] (myand) {}
+(myand.in 1) node[anchor=east] {\({b_0}\)}
+(myand.in 2) node[anchor=east] {\({b_1}\)}
+(myand.out) node[anchor=west] {\({b_0 \cdot b_1}\;(\text{mod }2)\)}
+;\end{circuitikz}
+
+\begin{circuitikz}\draw
+(0,0) node[xor port,scale=2.5] (myand) {}
+(myand.in 1) node[anchor=east] {\({b_0}\)}
+(myand.in 2) node[anchor=east] {\({b_1}\)}
+(myand.out) node[anchor=west] {\({b_0 + b_1}\;(\text{mod } 2)\)}
+;\end{circuitikz}
+
+\begin{circuitikz}\draw
+(0,0) node[not port,scale=2.5] (not) {}
+(not.in) node[anchor=east] {\({b_0}\)}
+(not.out) node[anchor=west] {\(1-{b_0}\;(\text{mod } 2)\)}
+;\end{circuitikz}
 \end{slide}
 
 \begin{slide}{Security}
