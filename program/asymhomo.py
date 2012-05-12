@@ -137,7 +137,25 @@ def encryptSk(sk,pk,N):
 	return encrypt(encS,pk[0],N)
 	
 
-#def fheRecrypt(cy,pk2,encS):
-	#encrypt cy2 under pk2
+def dotProuct(L1,L2):
+	sp=0
+	for i in range(len(L1)):
+		sp+=L1[i]*L2[i]
+	return sp
+			     
+def fheRecrypt(cy,pk2,encS,N):
+	
+	#Encrypt each cipher text bit in cy with pk. Reset each ciphered bit's Hint 
+	#Vector by multiplying by the newly encrypted ciphertext
+	for i in cy:
+		i[0]=encrypt([i[0]],pk2,i[1],N)[0]
+		for j in i[1]:
+			j*=j*i[0]
+	
+	#CY is now doubly encrypted under pk1 and pk2.
+	for i in cy:
+		i[0]=dotProduct(i[1],encS)
+	
+	return cy		
 	#encS is already encrypted under pk2
 	#dot product cy[1] encS	
