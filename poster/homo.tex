@@ -19,7 +19,7 @@ Clark Rinker, Philip Robinson
 \begin{document}
 \maketitle
 
-
+\def\fh{{\em Fully Homomorphic\xspace}}
 
 \begin{multicols}{2}
 \begin{slide}{Abstract}
@@ -33,10 +33,31 @@ Our investigation includes a high level synopsis of the mathematics involved in 
 
 \end{slide}
 
-\begin{slide}{Homomorphic Encryption}
- \centerline{description homomorphic encryption \\ With images and diagrams}
+\begin{slide}{Definitions}
+In order for a cryptographic system to be considered \fh we need to make some clear definitions availible. It also proves benificial to clearly express why these terms are significant and their relationships to eachother. 
 
-%\(\sage{3 + 4}\)
+\begin{itemize}
+\item Circuit Operations
+\begin{itemize}
+\item Fundamental Gates
+\item Polynomials
+\end{itemize}
+\item Bootstrapping
+\begin{itemize}
+\item Compact
+\item Circular Security
+\end{itemize}
+\item Secure Problems
+\begin{itemize}
+\item Approximate GCD
+\item Subset Sum Problem
+\item Computational Complexity
+\end{itemize}
+
+\end{itemize}
+
+
+We may need to additionally ad information about Rings, Prime Ideals, this can be added later. There are likely other definitions that are needed, and will likely be found as the ones above are addressed
 \end{slide}
 
 \begin{slide}{Security}
