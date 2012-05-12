@@ -1,5 +1,8 @@
 from homo import *
 import random
+from fractions import Fraction
+from math import ceil
+from math import log
 
 #Asym PHE Helper Functions
 def privateKeyGen(P):
@@ -69,11 +72,13 @@ def fheKeyGen(N):
 	
 	return ((sk,S),(pk,y))
 	
-	
+#Notes about limiting Hints:
+#Limit the precsion of the hint rationals to Lg Alpha +3
 def hintGen(f,alpha):
+	f=Fraction(f)
 	SparseSubset = []
 	for i in range(alpha-1):
-        	SparseSubset.append(random.random()*f)
+        	SparseSubset.append(Fraction(round(random.random()*f,int(ceil((log(alpha,2)+3))))))
         	f = f - SparseSubset[-1]
         SparseSubset.append(f)
         
@@ -81,7 +86,8 @@ def hintGen(f,alpha):
 def garbageGen(beta,alpha):
 	garbage=[]
 	for i in range(beta-alpha):
-		garbage.append(random.random()*2)
+		garbage.append(Fraction(round(random.random()*2,int(ceil((log(alpha,2)+3))))))
+	
 	return garbage
 		
 		
@@ -119,7 +125,8 @@ def fheDecrypt(cy,S):
 		y=i[1]
 		message.append(abs( mods((mods(c,2) + mods(hintsum(y,S),2)),2)))
 	return message
-		
+
+#This is doing the summing the wrong values		
 def hintsum(y,S):
 	z=0.0
 	for i in S:
@@ -137,7 +144,24 @@ def encryptSk(sk,pk,N):
 	return encrypt(encS,pk[0],N)
 	
 
-#def fheRecrypt(cy,pk2,encS):
-	#encrypt cy2 under pk2
+def dotProduct(L1,L2):
+	sp=0
+	for i in range(len(L1)):
+		sp+=L1[i]*L2[i]
+	return sp
+			     
+#def fheRecrypt(cy,y,pk2,encS,N):
+	
+	#Encrypt each cipher text bit in cy with pk. Reset each ciphered bit's Hint 
+	#Vector by multiplying by the newly encrypted ciphertext
+#	for i in cy:
+#		iencrypt([i[0]],pk2,y,N)[0]
+		
+	
+	#CY is now doubly encrypted under pk1 and pk2.
+#	for i in cy:
+#		i[0]=dotProduct(i[1],encS)
+	
+#	return cy		
 	#encS is already encrypted under pk2
 	#dot product cy[1] encS	
