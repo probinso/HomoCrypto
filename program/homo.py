@@ -12,7 +12,7 @@ def mods(x,n):
    b = x % (-1*n)
    if abs(a)<abs(b): return a
    else: return b
-
+   #return (x-(x//n)*n)
 
 ## Initialization Tools ##
 
@@ -41,7 +41,7 @@ def makeEncrypt(N,Q):
    def makeEncryptBit(N,Q):
       Mn,Mx = bitLims(N)
       Qn,Qx = bitLims(Q)
-      return lambda m,p: randint(Qn,Qx)*p + 2*(mods(randint(Mn,Mx),p)//2) + m
+      return lambda m,p: randint(Qn,Qx)*p + 2*(randint(Mn,Mx)//2) + m
    
    F = makeEncryptBit(N,Q)
    return (lambda L,p : [F(x,p) for x in L])

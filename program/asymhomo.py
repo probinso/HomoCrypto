@@ -9,29 +9,27 @@ def privateKeyGen(P):
 	return genKey(P)
 
 
+def distribute(sk,N,Q):
+	q=random.randrange(0,(2**((N**5)))//sk)
+	r=random.randrange(-1*(2**N),2**N)
+	return sk*q+r
+	
 def publicKeyGen(sk,N):
 	N,P,Q=getNPQ(N)
-	#x=[0]*N
-	x=[0]*P
-        encrypt = makeEncrypt(N,Q)
-        public = encrypt(x,sk)
-	"""
-	maximal=0
-	
-	for i in public:
-		if i>maximal:
-			maximal=i
-	#The Maximal pk element can't be even and it remainder sk can't be odd for some fucking reason
-	#Can This Even Happen?
-	if i % 2 ==0 or maximal % sk == 1:
-		public=publicKeyGen(sk,N)
-	"""
-        return public
+	pk=[]
+	for i in range(Q+N):
+		pk.append(distribute(sk,N,Q))
+	maximal=max(pk)
+	maxindex=pk.remove(maximal)
+	pk.insert(0,maximal)
+	if maximal%2==0 or mods(maximal,sk)%2!=0:
+		pk=publicKeyGen(sk,N)
+        return pk
 
 
 def randomSubSetSum(pk):
 	#Defaults to 2 rite now get over it
-	return sum([choice(pk) for i in range(2)])
+	return sum([choice(pk[1:]) for i in range(10)])
 	#return pk[random.randint(0,len(pk)-1)]+pk[random.randint(0,len(pk)-1)]
 
 	
@@ -45,15 +43,6 @@ def asymKeyGen(N):
 #message is an array pk is a public key array 
 def encrypt(message,pk,N):
 	"""
-	cipher=[]
-	rss=randomSubSetSum(pk)
-	Mn,Mx = bitLims(N)
-	for i in message:
-		r2=2*(randint(Mn,Mx)//2)
-		cipher.append(rss+r2 + i)
-	#return cipher
-	"""
-	"""
 	  The code above is not secure. It is likely that randomSubSetSum(pk)
 	  will introduce a constant of too much noise and because these values
 	  do not reset, on a per-loop basis you are likely to produce a negation 
@@ -65,9 +54,10 @@ def encrypt(message,pk,N):
 	  a summation over 10 keys. Now we are getting 'more' conistant results. 
 	  What needed to happen was updating the traditional 
 	"""
-	Mn,Mx = bitLims(N)
-	rss = randomSubSetSum(pk)
-	cipher = [rss+i for i in message]
+	
+	_,mx = bitLims(2*N)
+	
+	cipher = [(2*(randomSubSetSum(pk)+(random.randrange(-1*mx,mx)))+i)% pk[0] for i in message]
 	
 	print "encrypted bits :: ",[x % 2 for x in cipher]
 	return cipher
@@ -237,15 +227,73 @@ def dotProduct(L1,L2):
 	#dot product cy[1] encS	
 
 
+def intToBinList(i):
+    ret=[]
+    while(i !=0):
+            ret.append(i %2)
+            i=i/2
+    return list(reversed(ret))
+
+
+def binListToInt(l):
+    s=0
+    l=list(reversed(l))
+    for i in range(len(l)):
+            s+=l[i]*2**i
+    return s
+			     
+#Recrypt cy in place, return refreashed Ciphertext Tuples
+def fheRecrypt(cy,y,pk2,encS,N):
+	
+	for i in cy:
+		ciphered=intToBinList(cy[0])
+		#Do an FHE encrypt with an already chosen key
+		ciphered=doubleEncrypt(cipher,pk,y,N)
+		message=doubleDecrypt(cipher,encS)
+		i[0]=binListToInt(message)
+		i[1]=multCipherHint(i[0],y)
+	return cy
+
+
+#FHE Encrypt with Given pk rather than rss p
+def doubleEncrypt(cipher,pk,y,N):
+        c=encrypt(message,pk,N)
+        cipher=[]
+        for i in range(len(c)):
+                cipher.append((c[i],multCipherHint(c[i],y)))
+        return cipher
+	
+
+#For Each Y in CY dot product Y,encS and return lsb(c) xor lsb(product)	
+def doubleDecrypt(cy,encS):
+	message=[]
+        for i in cy:
+                c=i[0]
+                y=i[1]
+                message.append(abs( mods((mods(c,2) + mods(dotProduct(y,encS),2)),2)))
+	return message	
+	
 def go(secure,message):
-	print message
+	N,P,Q=getNPQ(secure)
+	"""print message
 	(sk,S),(pk,y) = fheKeyGen(secure)
 	print "secret key :",sk
-	print "public keys:",
-	for i in pk:
-		print i%2,
+	#print "public keys:",
+	#for i in pk:
+	#	print i%2,
 	print
 	print "finished keygen"
 	cipher = fheEncrypt(message,pk,y,secure)
 	print "finished encrypt"
-	print fheDecrypt(cipher,S)
+	print fheDecrypt(cipher,S)"""
+	
+	print "Message=", message
+	
+	sk=privateKeyGen(P)
+	print "Finished SK Gen"
+	pk=publicKeyGen(sk,N)
+	print "public keys :: ", [x % 2 for x in pk[:5]]
+	print "Finished Key Gens"
+	cipher=encrypt(message,pk,N)
+	print "finished Encrypt"
+	print decrypt(cipher,sk)
