@@ -69,10 +69,7 @@ def encrypt(message,pk,N):
 	rss = randomSubSetSum(pk)
 	cipher = [rss+i for i in message]
 	
-	print "encrypted bits :: [",(cipher[0]%2),
-	for x in cipher[1:]:
-		print ",",x % 2,
-	print "]"
+	print "encrypted bits :: ",[x % 2 for x in cipher]
 	return cipher
 	
 	
