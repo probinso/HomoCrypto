@@ -41,7 +41,7 @@ def makeEncrypt(N,Q):
    def makeEncryptBit(N,Q):
       Mn,Mx = bitLims(N)
       Qn,Qx = bitLims(Q)
-      return lambda m,p: randint(Qn,Qx)*p + 2*(randint(Mn,Mx)//2) + m
+      return lambda m,p: randint(Qn,Qx)*p + mods(2*(randint(Mn,Mx)//2),p) + m
    
    F = makeEncryptBit(N,Q)
    return (lambda L,p : [F(x,p) for x in L])

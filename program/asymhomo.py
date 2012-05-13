@@ -21,33 +21,48 @@ def publicKeyGen(sk,N):
 			maximal=i
 	#The Maximal pk element can't be even and it remainder sk can't be odd for some fucking reason
 	#Can This Even Happen?
-	if i % 2 ==0 or maximal %sk==1:
+	if i % 2 ==0 or maximal % sk == 1:
 		public=publicKeyGen(sk,N)
         return public
 
 
 def randomSubSetSum(pk):
 	#Defaults to 2 rite now get over it
-		return pk[random.randint(0,len(pk)-1)]+pk[random.randint(0,len(pk)-1)]
-		
-		
+	return choice(pk)+choice(pk)
+	#return pk[random.randint(0,len(pk)-1)]+pk[random.randint(0,len(pk)-1)]
+
+	
 def asymKeyGen(N):
 	N,P,Q=getNPQ(N)
 	sk=privateKeyGen(P)
 	pk=publicKeyGen(sk,N)
 	return (sk,pk)
-	
 
 
 #message is an array pk is a public key array 
 def encrypt(message,pk,N):
+	"""
 	cipher=[]
 	rss=randomSubSetSum(pk)
 	Mn,Mx = bitLims(N)
 	for i in message:
 		r2=2*(randint(Mn,Mx)//2)
 		cipher.append(rss+r2 + i)
+	#return cipher
+	"""
+	"""
+	  The code above is not secure. It is likely that randomSubSetSum(pk)
+	  will introduce a constant of too much noise and because these values
+	  do not reset, on a per-loop basis you are likely to produce a negation 
+	  to every bit by forcing overflow. That is why we were getting bad answers
+	  we were recieving 3 times the noise for every bit
+	"""
+	Mn,Mx = bitLims(N)
+	rss = choice(pk) #randomSubSetSum(pk)
+	cipher = [rss+i-(2*(randint(Mn,Mx)//2)) for i in message]
 	return cipher
+	
+	
 
 def decrypt(cipher,sk):
 	message=[]
@@ -57,11 +72,26 @@ def decrypt(cipher,sk):
 
 #TODO code correct a/b values
 def getAlphaBeta(N):
+	"""
+	  this is supposed to produce alpha,beta tupple 
+	  such that 
+	    beta \approx (lambda^5)
+	    (beta choose alpha) \approx (beta ^ alpha)
+	  these are parameters used for generating our 
+	  subset-sum problem. our Set will be length Beta, 
+	  our subset-sum solution will be length alpha
+	  
+	  I do not know how to do this. 
+	"""
 	return (10,N**5)
-	
+
 #Generates key pairs and hints	
 def fheKeyGen(N):
-	N,P,Q=getNPQ(N)
+	"""
+	  This is the fully homomorphic encryption scheme key 
+	  generator. Takes in Security Parameter
+	"""
+	N,P,Q=getNPQ(N) 
 	alpha,beta=getAlphaBeta(N)
 	sk=privateKeyGen(P)
 	pk=publicKeyGen(sk,N)
@@ -69,12 +99,21 @@ def fheKeyGen(N):
 	hint=hintGen((1.0/sk),alpha)
 	garbage=garbageGen(beta,alpha)
 	y,S=hide(hint,garbage)
+	# y holds list of quotients
+	# S holds list of indexes
 	
 	return ((sk,S),(pk,y))
-	
+
 #Notes about limiting Hints:
 #Limit the precsion of the hint rationals to Lg Alpha +3
 def hintGen(f,alpha):
+	"""
+	  This takes in a floating point number representative of 
+	  1/secret_key, and alpha denoting the size of the subset
+	  for our subset-sum problem
+	  
+	  produces the subset-sum that will be indexed into later
+	"""
 	f=Fraction(f)
 	SparseSubset = []
 	for i in range(alpha-1):
@@ -83,57 +122,78 @@ def hintGen(f,alpha):
         SparseSubset.append(f)
         
         return SparseSubset
+
 def garbageGen(beta,alpha):
+	"""
+	  This produces the garbage bits that produce the coset for
+	  the subset-sum problem (length beta-alpha)
+	"""
 	garbage=[]
 	for i in range(beta-alpha):
 		garbage.append(Fraction(round(random.random()*2,int(ceil((log(alpha,2)+3))))))
 	
 	return garbage
-		
-		
-		
-def hide(hint,garbage):
-	S=[]
-	for h in hint:
-		
-		index=random.randrange(0,len(garbage)-1)
 
-		garbage.insert(index,h) 	
-	for h in hint:
-		S.append(garbage.index(h))
+def hide(hint,garbage):
+	"""
+	  Takes in Hint and Garbage cosets to produce a random 
+	  ordering to their combination. 
+	"""
+	#S=[] # [0]*(len(garbage)+len(hint))
+	for h in hint:	
+		index=random.randrange(0,len(garbage)-1)
+		garbage.insert(index,h)
+	
+	S = [garbage.index(h) for h in hint]
+	#for h in hint:
+	#	S.append(garbage.index(h))
 	return (garbage,S)
-		
+
 #Fhe Encrypt message is array pk is the set, y is the hidden sk, N is the security parameter
 def fheEncrypt(message,pk,y,N):
-	c=encrypt(message,pk,N)
-	cipher=[]
-	for i in range(len(c)):
-		cipher.append((c[i],multCipherHint(c[i],y)))
+	"""
+	  pk = one of the public keys 
+	  y  = the set of values for subset-sum security 
+	  N  = security parameter 
+	"""
+	
+	c = encrypt(message,pk,N)
+	cipher = [(x,multCipherHint(x,y)) for x in c]
+	# code below has been abandoned
+	#for i in range(len(c)):
+	#	cipher.append((c[i],multCipherHint(c[i],y)))
 	return cipher
 	
 #bultiplies a encuphered text by the hint
 def multCipherHint(bit,y):
+	
 	for i in y:
 		i*=bit
-	return y		
+	return y
+	##### FLAG
+	#return [(x*bit)%2 for x in y]
+	#return [x*bit for x in y]
 
 #This needs Roundingz
 def fheDecrypt(cy,S):
-	message=[]
+	"""
+	  cy is the cypher tuples 
+	"""
+	message=[] 
 	for i in cy:
-		c=i[0]
-		y=i[1]
-		message.append(abs( mods((mods(c,2) + mods(hintsum(y,S),2)),2)))
+		c=i[0] # cipher text
+		y=i[1] # cipher text vector ... needs explaining
+		#message.append(abs( mods((mods(c,2) + mods(hintsum(y,S),2)),2)))
+		message.append((c%2)^hintsum(y,S)%2)
 	return message
 
-#This is doing the summing the wrong values		
+#This is doing the summing the wrong values
 def hintsum(y,S):
-	z=0.0
-	for i in S:
-		z+=y[i]
-	return int(round(z))
-	
-
+	#z=0.0
+	#for i in S:
+	#	z+=y[i]
+	return int(sum([y[i] for i in S]))
+	#return int(round(z))
 
 def encryptSk(sk,pk,N):
 	encS=[0]*len(pk[1])
@@ -155,7 +215,7 @@ def dotProduct(L1,L2):
 	#Encrypt each cipher text bit in cy with pk. Reset each ciphered bit's Hint 
 	#Vector by multiplying by the newly encrypted ciphertext
 #	for i in cy:
-#		iencrypt([i[0]],pk2,y,N)[0]
+#		encrypt([i[0]],pk2,y,N)[0]
 		
 	
 	#CY is now doubly encrypted under pk1 and pk2.
@@ -165,3 +225,12 @@ def dotProduct(L1,L2):
 #	return cy		
 	#encS is already encrypted under pk2
 	#dot product cy[1] encS	
+
+
+def go(secure,message):
+	print message
+	(sk,S),(pk,y) = fheKeyGen(secure)
+	print "finished keygen"
+	cipher = fheEncrypt(message,pk,y,secure)
+	print "finished encrypt"
+	print fheDecrypt(cipher,S)
