@@ -11,9 +11,11 @@ def privateKeyGen(P):
 
 def publicKeyGen(sk,N):
 	N,P,Q=getNPQ(N)
-	x=[0]*N
+	#x=[0]*N
+	x=[0]*P
         encrypt = makeEncrypt(N,Q)
         public = encrypt(x,sk)
+	"""
 	maximal=0
 	
 	for i in public:
@@ -23,12 +25,13 @@ def publicKeyGen(sk,N):
 	#Can This Even Happen?
 	if i % 2 ==0 or maximal % sk == 1:
 		public=publicKeyGen(sk,N)
+	"""
         return public
 
 
 def randomSubSetSum(pk):
 	#Defaults to 2 rite now get over it
-	return choice(pk)+choice(pk)
+	return sum([choice(pk) for i in range(2)])
 	#return pk[random.randint(0,len(pk)-1)]+pk[random.randint(0,len(pk)-1)]
 
 	
@@ -57,9 +60,19 @@ def encrypt(message,pk,N):
 	  to every bit by forcing overflow. That is why we were getting bad answers
 	  we were recieving 3 times the noise for every bit
 	"""
+	"""
+	  Okay now I understand, and I have updated randomSubSetSum to return 
+	  a summation over 10 keys. Now we are getting 'more' conistant results. 
+	  What needed to happen was updating the traditional 
+	"""
 	Mn,Mx = bitLims(N)
-	rss = choice(pk) #randomSubSetSum(pk)
-	cipher = [rss+i-(2*(randint(Mn,Mx)//2)) for i in message]
+	rss = randomSubSetSum(pk)
+	cipher = [rss+i for i in message]
+	
+	print "encrypted bits :: [",(cipher[0]%2),
+	for x in cipher[1:]:
+		print ",",x % 2,
+	print "]"
 	return cipher
 	
 	
@@ -91,7 +104,7 @@ def fheKeyGen(N):
 	  This is the fully homomorphic encryption scheme key 
 	  generator. Takes in Security Parameter
 	"""
-	N,P,Q=getNPQ(N) 
+	N,P,Q=getNPQ(N)
 	alpha,beta=getAlphaBeta(N)
 	sk=privateKeyGen(P)
 	pk=publicKeyGen(sk,N)
@@ -230,6 +243,11 @@ def dotProduct(L1,L2):
 def go(secure,message):
 	print message
 	(sk,S),(pk,y) = fheKeyGen(secure)
+	print "secret key :",sk
+	print "public keys:",
+	for i in pk:
+		print i%2,
+	print
 	print "finished keygen"
 	cipher = fheEncrypt(message,pk,y,secure)
 	print "finished encrypt"
