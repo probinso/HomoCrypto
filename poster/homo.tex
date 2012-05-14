@@ -6,10 +6,10 @@
 \usepackage{xspace}
 \usepackage{verbatim}
 %\usepackage{sagetex}
-%\usepackage{circuitikz}
+\usepackage{circuitikz}
 
-\usepackage{pst-all}
-\usepackage{pst-circ}
+%\usepackage{pst-all}
+%\usepackage{pst-circ}
 
 \usepackage{titlesec}
 \titlespacing*{\subsubsection}{0pt}{*2}{*0}
@@ -53,20 +53,20 @@ In order for a cryptographic system to be considered \fh we need to make some cl
 \begin{itemize}
 \item Fundamental Gates
   The most basic logical operations; AND, OR, and NOT. 
-\item Polynomials
+%\item Polynomials
 \end{itemize}
 \item Bootstrapping
   Re-encrypting already encrypted data using elements from the original encryption circuit.
 \begin{itemize}
 \item Compact
-\item Circular Security
+%\item Circular Security
 \end{itemize}
 \item Secure Problems
 \begin{itemize}
 \item Approximate GCD
 \item Subset Sum Problem
   Given a set of integers, is there a non-empty set whose sum is $S$ where $S$ is a random integer that acts as the secret key.
-\item Computational Complexity
+%\item Computational Complexity
 \end{itemize}
 
 \end{itemize}
@@ -75,9 +75,10 @@ In order for a cryptographic system to be considered \fh we need to make some cl
 We may need to additionally add information about Rings, Prime Ideals, this can be added later. There are likely other definitions that are needed, and will likely be found as the ones above are addressed
 \end{slide}
 
+
 \begin{slide}{Circuit probably moved}
 
-\begin{comment}
+%\begin{comment}
 \begin{multicols}{3}
 \resizebox{\columnwidth}{!}{
 \begin{circuitikz}\draw
@@ -105,15 +106,96 @@ We may need to additionally add information about Rings, Prime Ideals, this can 
 ;\end{circuitikz}
 }
 \end{multicols}
-\end{comment}
+%\end{comment}
 
 
 \resizebox{\columnwidth}{!}{\includegraphics{infograph.eps}}
 \end{slide}
 
-\begin{slide}{Circuit Diagram To Be Moved}
+
+
+\begin{slide}{Limitations}
+\subsection*{Space Complexity}
+  This cryptographic model has not yet been refined to a practical level. Encrypting data bitwise under these methods, such that the cipher text is cryptographically secure requires a great degree of noise/bloat to hide the pairity of our unencrypted message bidgit. 
+\parskip 1em
+
+
+ % \vspace{1em}
+\resizebox{\columnwidth}{!}{
+  \begin{tabular}{c|c|c|c|c|c}
+     & {\small bit-size} &  {\small encrypted volume}  & \(\lambda = 8\) & \(\lambda = 16\) & \(\lambda = 64\) \\\hline 
+    {\small bidgit} & 1 & \(\approx \lambda^7 \) & \(\approx\) 256 KB & 32 MB & 512 GB \\\hline
+    {\small ``cadadr''} & 6 Bytes & & \(\approx\) 12 MB & 1.5 GB & 24 TB \\\hline
+    {\small Declaration of Independence} & 8.5 KB & & \(\approx\) 17 GB & 2.1 TB & 34 PB\\
+  \end{tabular}
+  }%\end{center}
+ % \vspace{1em}
+
+  What we also notice is that the storage space of encrypted data is linear \(\;\in\Theta(1)\) with respect to information size.  It is also important to note that operations can as much as double the space complexity over the addressed space, but this is often not over a large block of space.
 
 \begin{comment}
+\begin{align*}
+f_{(1\text{ bit},64)}&=512\; GB\\
+f_{(6\text{ Bytes},64)}&=(512\; GB)\cdot6\cdot 8\\&=24\; TB
+\end{align*}
+\end{comment}
+
+\subsection*{Cannot Evaluate Conditional Branching}
+For any operation, if we are unable to 
+
+\end{slide}
+
+\begin{slide}{Security}
+
+Given \(\lambda\) as a security Parameter 
+
+we have a private key space of \(2^{(\lambda^2-2)} - (2^{\lambda^{2-1}})-1\)
+
+The cryptographic hint uses the subset sum problem over a sparse subset. cracking the hint takes up space 
+
+\[\left(\begin{matrix}\beta = \lambda^5\\\alpha \end{matrix}\right)\approx \beta^\alpha\] produces
+
+
+The problem of cracking is {\em Soft NP-Complete}
+
+%This is because as the security parameters grows, the searchspace and the cost of the operations grow. 
+\end{slide}
+
+
+
+%\end{multicols}
+%\begin{multicols}{3}
+\begin{slide}{Next Steps}
+  What we have accomplished is effective but not efficient. Although we recognize that this cryptographic system is not a practical one, we would like to make it as realistic as possible. Because we are dealing with voluminous data, we are planning to distribute the storage and operations load accross an entire lab using {\em Hadoop} distributed systems. 
+\parskip 1em 
+
+  Because we are working with such large numbers, it is additionally very time-expensive to perform multiplication. The kids multiplication algorithm is \(\in\Theta(n^2)\), but even with Karatsuba's algorithm \(\approx\Theta(n\cdot\lg n)\) implemented in python we do not recieve sufficient speed up. We are planning to shuffle this task onto the video card of each machine using {\em PyCuda}, so that we can perform faster DFTs. By doing this we can gain speed in parallelization that we are normally unable to recieve with python derivatives.
+
+  Finally, we are looking at shrinking our space complexity by migrating to supporting an n-ary system rather than a binary system. This means we'll need to more formally address definitions for our co-sets and ideals.% under \(\mathbb{Z}_{<+,\cdot>}\)
+\end{slide}
+
+\begin{slide}{Mathematical Background}
+Describing the abstract Ideals relations
+\end{slide}
+
+\begin{slide}{Bootstrapping}
+The Power of Bootstraping
+\end{slide}
+
+\begin{slide}{System Resources}
+Memory Used for Project \\ Time to complete \(O(n)\) equivelent operation \\ Projected Space \\ Keysize 
+\end{slide}
+
+\begin{slide}{Significant Difficulties}
+
+\end{slide}
+
+\begin{slide}{Conclusion}
+Our Findings \\ Further Implementations \\ Python as a Vehicle
+\end{slide}
+\begin{slide}{Circuit Diagram To Be Moved}
+
+%\begin{comment}
 \begin{circuitikz}[scale=2.5]\draw
 % begin string compare
 (0,6) node[xor port,scale=2.5] (myxor0){}
@@ -137,87 +219,10 @@ We may need to additionally add information about Rings, Prime Ideals, this can 
 (myxor1.out) -| (myor.in 1) {}
 % begin carry adder
 ;\end{circuitikz}
-\end{comment}
-
-\begin{pspicture}(-1,-1)(8.5,3)
-\logicnot[invertoutput=true](0,0){IEEE}
-\logicnot[invertoutput=true,iec=true,iecinvert=true](4,0){IEC}
-\end{pspicture}
+%\end{comment}
 
 \end{slide}
 
-\begin{slide}{Limitations}
-\subsection*{Space Complexity}
-  This cryptographic model has not yet been refined to a practical level. Encrypting data bitwise under these methods, such that the cipher text is cryptographically secure requires a great degree of noise/bloat to hide the pairity of our unencrypted message bidgit. 
-
-  \vspace{1em}
-\resizebox{\columnwidth}{!}{
-  \begin{tabular}{c|c|c|c|c|c}
-     & {\small bit-size} &  {\small encrypted volume}  & \(\lambda = 8\) & \(\lambda = 16\) & \(\lambda = 64\) \\\hline 
-    {\small bidgit} & 1 & \(\approx \lambda^7 \) & \(\approx\) 256 KB & 32 MB & 512 GB \\\hline
-    {\small ``cadadr''} & 6 Bytes & & \(\approx\) 12 MB & 1.5 GB & 24 TB \\\hline
-    {\small Declaration of Independence} & 8.5 KB & & \(\approx\) 17 GB & 2.1 TB & 34 PB\\
-  \end{tabular}
-  }%\end{center}
-  \vspace{1em}
-
-  What we also notice is that the storage space of encrypted data is linear \(\;\in\Theta(1)\) with respect to information size.  It is also important to note that operations can as much as double the space complexity over the addressed space, but this is often not over a large block of space.
-\begin{align*}
-f_{(1\text{ bit},64)}&=512\; GB\\
-f_{(6\text{ Bytes},64)}&=(512\; GB)\cdot6\cdot 8\\&=24\; TB
-\end{align*}
-
-\subsection*{Cannot Evaluate Conditional Branching}
-For any operation, if we are unable to 
-
-\end{slide}
-
-\begin{slide}{Security}
-
-Given \(\lambda\) as a security Parameter 
-
-we have a private key space of \(2^{(\lambda^2-2)} - (2^{\lambda^{2-1}})-1\)
-
-The cryptographic hint uses the subset sum problem over a sparse subset. cracking the hint takes up space 
-
-\[\left(\begin{matrix}\beta = \lambda^5\\\alpha \end{matrix}\right)\approx \beta^\alpha\] produces
-
-
-The problem of cracking is {\em Soft NP-Complete}
-
-This is because as the security parameters grows, the searchspace and the cost of the operations grow. 
-\end{slide}
-
-%\end{multicols}
-%\begin{multicols}{3}
-\begin{slide}{Next Steps}
-  What we have accomplished is effective but not efficient. Although we recognize that this cryptographic system is not a practical one, we would like to make it as realistic as possible. Because we are dealing with voluminous data, we are planning to distribute the storage and operations load accross an entire lab using {\em Hadoop} distributed systems. 
-\parskip 1em 
-
-  Because we are working with such large numbers, it is additionally very time-expensive to perform multiplication. The kids multiplication algorithm is \(\in\Theta(n^2)\), but even with Karatsuba's algorithm \(\approx\Theta(n\cdot\lg n)\) implemented in python we do not recieve sufficient speed up. We are planning to shuffle this task onto the video card of each machine using {\em PyCuda}, so that we can perform faster DFTs. By doing this we can gain speed in parallelization that we are normally unable to recieve with python derivatives.
-
-  Finally, we are looking at shrinking our space complexity by migrating to supporting an n-ary system rather than a binary system. This means we'll need to more formally address definitions for our co-sets and ideals under \(\mathbb{Z}_{<+,\cdot>}\)
-\end{slide}
-
-\begin{slide}{Mathematical Background}
-Describing the abstract Ideals relations
-\end{slide}
-
-\begin{slide}{Bootstrapping}
-The Power of Bootstraping
-\end{slide}
-
-\begin{slide}{System Resources}
-Memory Used for Project \\ Time to complete \(O(n)\) equivelent operation \\ Projected Space \\ Keysize 
-\end{slide}
-
-\begin{slide}{Significant Difficulties}
-
-\end{slide}
-
-\begin{slide}{Conclusion}
-Our Findings \\ Further Implementations \\ Python as a Vehicle
-\end{slide}
 
 \begin{slide}{Bibliography}
 Thats where the bibliography goes
