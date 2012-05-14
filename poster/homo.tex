@@ -7,13 +7,19 @@
 %\usepackage{sagetex}
 \usepackage{circuitikz}
 
+\usepackage{titlesec}
+\titlespacing*{\subsubsection}{0pt}{*2}{*0}
+\titlespacing*{\subsection}{0pt}{0pt}{*0}
+
 \newcommand{\Bold}{\mathbf}
 
 \title{Homomorphic Cryptosystems}
 
 \author{
 Jeremy Caci, Ali Hajy, Jonah Jolley\\
-Clark Rinker, Philip Robinson
+Clark Rinker, Philip Robinson\\
+Advisor : Dr. David Bover\\
+Computer Science Department
 }
 
 
@@ -89,13 +95,17 @@ We may need to additionally add information about Rings, Prime Ideals, this can 
 \subsection*{Space Complexity}
   This cryptographic model has not yet been refined to a practical level. Encrypting data bitwise under these methods, such that the cipher text is cryptographically secure requires a great degree of noise/bloat to hide the pairity of our unencrypted message bidgit. 
 
+  \vspace{1em}
+  \begin{center}
   \begin{tabular}{c|c|c|c|c|c}
-     & bit-size &  encrypted volume  & \(\lambda = 8\) & \(\lambda = 16\) & \(\lambda = 64\) \\\hline 
-    bidgit & 1 & \(\approx \lambda^7 \) & \(\approx\) 256 KB & 32 MB & 512 GB \\\hline
-    ``cadadr'' & 6 Bytes & & \(\approx\) 12 MB & 1.5 GB & 24 TB \\\hline
+     & {\small bit-size} &  {\small encrypted volume}  & \(\lambda = 8\) & \(\lambda = 16\) & \(\lambda = 64\) \\\hline 
+    {\small bidgit} & 1 & \(\approx \lambda^7 \) & \(\approx\) 256 KB & 32 MB & 512 GB \\\hline
+    {\small ``cadadr''} & 6 Bytes & & \(\approx\) 12 MB & 1.5 GB & 24 TB \\\hline
     {\small Declaration of Independence} & 8.5 KB & & \(\approx\) 17 GB & 2.1 TB & 34 PB\\
   \end{tabular}
-  
+  \end{center}
+  \vspace{1em}
+
   What we also notice is that the storage space of encrypted data is linear \(\;\in\Theta(1)\) with respect to information size.  It is also important to note that operations can as much as double the space complexity over the addressed space, but this is often not over a large block of space.
 \begin{align*}
 f_{(1\text{ bit},64)}&=512\; GB\\
