@@ -146,9 +146,9 @@ This is because as the security parameters grows, the searchspace and the cost o
   What we have accomplished is effective but not efficient. Although we recognize that this cryptographic system is not a practical one, we would like to make it as realistic as possible. Because we are dealing with voluminous data, we are planning to distribute the storage and operations load accross an entire lab using {\em Hadoop} distributed systems. 
 \parskip 1em 
 
-  Because we are working with such large numbers, it is additionally very time-expensive to perform multiplication. The kids multiplication algorithm is \(\in\Theta(n^2)\), but even with Karatsuba's algorithm \(\approx\Theta(n\cdot\lg n)\) implemented in python we do not recieve sufficient speed up. We are planning to shuffle this task onto the video card of each machine using {\em PyCuda}, so that we can perform faster DFTs. 
+  Because we are working with such large numbers, it is additionally very time-expensive to perform multiplication. The kids multiplication algorithm is \(\in\Theta(n^2)\), but even with Karatsuba's algorithm \(\approx\Theta(n\cdot\lg n)\) implemented in python we do not recieve sufficient speed up. We are planning to shuffle this task onto the video card of each machine using {\em PyCuda}, so that we can perform faster DFTs. By doing this we can gain speed in parallelization that we are normally unable to recieve with python derivatives.
 
-  Finally, we are looking at shrinking our space complexity by migrating to supporting an n-ary system rather than a binary system. This means we'll need 
+  Finally, we are looking at shrinking our space complexity by migrating to supporting an n-ary system rather than a binary system. This means we'll need to more formally address definitions for our co-sets and ideals under \(\mathbb{Z}_{<+,\cdot>}\)
 \end{slide}
 
 \begin{slide}{Mathematical Background}
