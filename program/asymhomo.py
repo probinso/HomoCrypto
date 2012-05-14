@@ -32,7 +32,7 @@ def randomSubSetSum(pk):
 	return sum([choice(pk[1:]) for i in range(10)])
 	#return pk[random.randint(0,len(pk)-1)]+pk[random.randint(0,len(pk)-1)]
 
-	
+
 def asymKeyGen(N):
 	N,P,Q=getNPQ(N)
 	sk=privateKeyGen(P)
@@ -59,7 +59,7 @@ def encrypt(message,pk,N):
 	
 	cipher = [(2*(randomSubSetSum(pk)+(random.randrange(-1*mx,mx)))+i)% pk[0] for i in message]
 	
-	print "encrypted bits :: ",[x % 2 for x in cipher]
+	#print "encrypted bits :: ",[x % 2 for x in cipher]
 	return cipher
 	
 	
@@ -94,7 +94,7 @@ def fheKeyGen(N):
 	sk=privateKeyGen(P)
 	pk=publicKeyGen(sk,N)
 	
-	hint=hintGen((1.0/sk),alpha)
+	hint=hintGen(Fraction(1,sk),alpha)
 	garbage=garbageGen(beta,alpha)
 	y,S=hide(hint,garbage)
 	# y holds list of quotients
@@ -112,13 +112,33 @@ def hintGen(f,alpha):
 	  
 	  produces the subset-sum that will be indexed into later
 	"""
-	f=Fraction(f)
+	#f=Fraction(f)
+
+	F = lambda x: Fraction(round(
+			random.random(),     # produce random number \in (0,1)
+			int(log(alpha,2)+3+1)# to this many degrees of accuracy
+			))*x# then cast it as a Fraction
+	"""
+	  we move *x to the outside of the function above because we
+	  want to insure that the function does not round to zero
+	  before the round function can be applied. 
+	"""
+	"""
+	  Additional Note about security. This produces a list of 
+	  likely decreasing values. Although they will be randomly 
+	  placed throughout our final list, knowing this may result 
+	  in comprimised security. Further investigation needed.
+	"""
+	
 	SparseSubset = []
+	
 	for i in range(alpha-1):
-        	SparseSubset.append(Fraction(round(random.random()*f,int(ceil((log(alpha,2)+3))))))
-        	f = f - SparseSubset[-1]
-        SparseSubset.append(f)
-        
+        	x = F(f)
+		SparseSubset.append(x)
+		f = f - x
+	
+	SparseSubset.append(f)
+	
         return SparseSubset
 
 def garbageGen(beta,alpha):
@@ -131,6 +151,17 @@ def garbageGen(beta,alpha):
 		garbage.append(Fraction(round(random.random()*2,int(ceil((log(alpha,2)+3))))))
 	
 	return garbage
+
+def random_insert_seq(lst, seq):
+	insert_locations = sample(xrange(len(lst) + len(seq)), len(seq))
+	inserts = dict(zip(insert_locations, seq))
+	input = iter(lst)
+	lst[:] = [
+		inserts[pos] if pos in inserts else next(input)
+		for pos in xrange(len(lst) + len(seq))
+		]
+	return lst
+
 
 def hide(hint,garbage):
 	"""
@@ -161,13 +192,11 @@ def fheEncrypt(message,pk,y,N):
 	#for i in range(len(c)):
 	#	cipher.append((c[i],multCipherHint(c[i],y)))
 	return cipher
-	
+
 #bultiplies a encuphered text by the hint
-def multCipherHint(bit,y):
-	
-	for i in y:
-		i*=bit
-	return y
+def multCipherHint(encbit,y):
+	ctotup = [encbit* x for x in y]
+	return ctotup
 	##### FLAG
 	#return [(x*bit)%2 for x in y]
 	#return [x*bit for x in y]
@@ -175,15 +204,18 @@ def multCipherHint(bit,y):
 #This needs Roundingz
 def fheDecrypt(cy,S):
 	"""
-	  cy is the cypher tuples 
+	  tupples?
 	"""
-	message=[] 
-	for i in cy:
-		c=i[0] # cipher text
-		y=i[1] # cipher text vector ... needs explaining
-		#message.append(abs( mods((mods(c,2) + mods(hintsum(y,S),2)),2)))
-		message.append((c%2)^hintsum(y,S)%2)
+	
+	message=[((x[0]%2)^(hintsum(x[1],S) %2))%2 for x in cy]
+	
 	return message
+	#for i in cy:
+	#	c=i[0] # cipher text
+	#	y=i[1] # cipher text vector ... needs explaining
+	#	#message.append(abs( mods((mods(c,2) + mods(hintsum(y,S),2)),2)))
+	#	message.append((c%2)^hintsum(y,S)%2)
+	#return message
 
 #This is doing the summing the wrong values
 def hintsum(y,S):
@@ -241,7 +273,7 @@ def binListToInt(l):
     return s
 			     
 #Recrypt cy in place, return refreashed Ciphertext Tuples
-def fheRecrypt(cy,y,pk2,encS,N):
+def fheRecrypt(cy,y,pk,encS,N):
 	
 	for i in cy:
 		ciphered=intToBinList(cy[0])
