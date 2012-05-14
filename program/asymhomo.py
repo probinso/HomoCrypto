@@ -65,9 +65,7 @@ def encrypt(message,pk,N):
 	
 
 def decrypt(cipher,sk):
-	message=[]
-	for i in cipher:
-		message.append(mods(i,sk)%2)
+	message = [int(mods(i,sk)%2) for i in cipher]
 	return message
 
 #TODO code correct a/b values
@@ -296,4 +294,4 @@ def go(secure,message):
 	print "Finished Key Gens"
 	cipher=encrypt(message,pk,N)
 	print "finished Encrypt"
-	print decrypt(cipher,sk)
+	print "Decrypted Message : ",decrypt(cipher,sk)
