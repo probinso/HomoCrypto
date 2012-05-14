@@ -4,8 +4,12 @@
 \usepackage{amsmath,amsthm,amssymb}
 \usepackage{epstopdf}
 \usepackage{xspace}
+\usepackage{verbatim}
 %\usepackage{sagetex}
-\usepackage{circuitikz}
+%\usepackage{circuitikz}
+
+\usepackage{pst-all}
+\usepackage{pst-circ}
 
 \usepackage{titlesec}
 \titlespacing*{\subsubsection}{0pt}{*2}{*0}
@@ -21,6 +25,7 @@ Clark Rinker, Philip Robinson\\
 Advisor : Dr. David Bover\\
 Computer Science Department
 }
+
 
 
 \begin{document}
@@ -71,6 +76,8 @@ We may need to additionally add information about Rings, Prime Ideals, this can 
 \end{slide}
 
 \begin{slide}{Circuit probably moved}
+
+\begin{comment}
 \begin{multicols}{3}
 \resizebox{\columnwidth}{!}{
 \begin{circuitikz}\draw
@@ -98,7 +105,45 @@ We may need to additionally add information about Rings, Prime Ideals, this can 
 ;\end{circuitikz}
 }
 \end{multicols}
+\end{comment}
+
+
 \resizebox{\columnwidth}{!}{\includegraphics{infograph.eps}}
+\end{slide}
+
+\begin{slide}{Circuit Diagram To Be Moved}
+
+\begin{comment}
+\begin{circuitikz}[scale=2.5]\draw
+% begin string compare
+(0,6) node[xor port,scale=2.5] (myxor0){}
+(myxor0.in 1) node[anchor=east] {\(s_0\)}
+(myxor0.in 2) node[anchor=east] {\(c_{8\cdot i}\)}
+
+(0,4) node[xor port,scale=2.5] (myxor1){}
+(myxor1.in 1) node[anchor=east] {\(s_1\)}
+(myxor1.in 2) node[anchor=east] {\(c_{8\cdot i + 1}\)}
+
+
+{ [dotted, ultra thick] (-1,3) -- (-1,1) }
+
+(0,0) node[xor port,scale=2.5] (myxorn){}
+(myxorn.in 1) node[anchor=east] {\(s_{8\cdot n}\)}
+(myxorn.in 2) node[anchor=east] {\(c_{8\cdot i + 8\cdot n}\)}
+
+(2,3) node[nor port,scale=2.5] (myor) {}
+(myxor0.out) -| (myor.in 1) {}
+(myxorn.out) -| (myor.in 2) {}
+(myxor1.out) -| (myor.in 1) {}
+% begin carry adder
+;\end{circuitikz}
+\end{comment}
+
+\begin{pspicture}(-1,-1)(8.5,3)
+\logicnot[invertoutput=true](0,0){IEEE}
+\logicnot[invertoutput=true,iec=true,iecinvert=true](4,0){IEC}
+\end{pspicture}
+
 \end{slide}
 
 \begin{slide}{Limitations}
