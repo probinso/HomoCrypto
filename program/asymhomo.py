@@ -228,15 +228,14 @@ def hintsum(y,S):
 #Used to Ecnrypt the Secret Key List with a new public Key
 
 def encryptSk(sk,pk,N):
-	"""the Sk list is a bunch of indecies. In order to do a recrypt it would need to be 
-    A Vector of 1's and zeros as Gentry Described. This function uses the public key to encrypt the secret key
-    and returns encS. Client would need to make this and send it to the server
-    ""
-    encS=[0]*len(pk[1])
+#the Sk list is a bunch of indecies. In order to do a recrypt it would need to be 
+#A Vector of 1's and zeros as Gentry Described. This function uses the public key to encrypt the secret key
+#and returns encS. Client would need to make this and send it to the server
+	encS=[0]*len(pk[1])
 	
 	for i in sk[1]:
 		encS[i]=1
-	#print encS
+	
 	return encrypt(encS,pk[0],N)
 	
 #Given two equal length lists dot product them. Used by FHE Recrypt to do the summation of Y vector
@@ -267,15 +266,16 @@ def binListToInt(l):
 #Recrypt cy in place, return refreashed Ciphertext Tuples
 #CY is a list of tuples. cy[0][0] is an encrypted bit cy[0][1] is it's y vector
 def fheRecrypt(cy,y,pk,encS,N):
-"""FHE Recrypt works as follows:
-*Convert Each Cipher bit into it's binary representation. If i[0] is a base ten integer representing a bit, it's 
- Bitwise representation is a list of zero's and ones. there are lg2(i[0]) elements in the list
-*Given that bitwise representaiton encrypt each bit. The given cipher bit is now doubly encrypted
-*Given the doubly encrypted list, Decrypted it using the encrypted sk vector. The result should be a list of bits
-    that sum up to the original cipher. 
-*Use the binlistToInt helper function to turn it back into a base 10 integer
-    representing the original encrypted bit
-"""
+	"""FHE Recrypt works as follows:
+	*Convert Each Cipher bit into it's binary representation. If i[0] is a base ten integer representing a bit, it's 
+	Bitwise representation is a list of zero's and ones. there are lg2(i[0
+	elements in the list
+	*Given that bitwise representaiton encrypt each bit. The given cipher bit is now doubly encrypted
+	*Given the doubly encrypted list, Decrypted it using the encrypted sk 
+	ector. The result should be a list of bits
+	that sum up to the original cipher. 
+	*Use the binlistToInt helper function to turn it back into a base 10 integer
+	representing the original encrypted bit"""
 	for i in cy:
     
 		ciphered=intToBinList(cy[0])
@@ -306,7 +306,7 @@ def doubleDecrypt(cy,encS):
 	return message	
 	
 def go(secure,message):
-    print "Ready to Rock!"
+	
 	N,P,Q=getNPQ(secure)
 	"""print message
 	(sk,S),(pk,y) = fheKeyGen(secure)
