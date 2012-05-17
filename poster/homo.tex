@@ -31,7 +31,7 @@ Computer Science Department
 \begin{document}
 \maketitle
 
-\def\fh{{\em Fully Homomorphic\xspace}}
+\def\fh{{\em Fully Homomorphic}\xspace}
 
 \begin{multicols}{2}
 \begin{slide}{Abstract}
@@ -115,6 +115,34 @@ In order for a cryptographic system to be considered \fh we need to make some cl
 
 
 \resizebox{\columnwidth}{!}{\includegraphics{infograph.eps}}
+
+
+An asymmetric encryption Scheme E has three algorithms:
+
+
+\section*{KeyGen}
+
+use lambda to generate two keys, a public encryption key pk that is available to everyone, and a secret decryption key sk.
+
+
+\section*{Encrypt}
+
+Will map a message to ciphertext using pk.
+
+\section*{Decrypt}
+
+will map the ciphertext back to the message using sk.
+
+
+Homomorphic Encryption scheme incorporates a fourth algorithm:
+
+
+\section*{Evaluate}
+
+Given pk, will perform operations over ciphertext to produce equivalent encrypted results
+
+
+
 \end{slide}
 
 
@@ -136,7 +164,7 @@ In order for a cryptographic system to be considered \fh we need to make some cl
   }%\end{center}
  % \vspace{1em}
 
-  What we also notice is that the storage space of encrypted data is linear \(\;\in\Theta(1)\) with respect to information size.  It is also important to note that operations can as much as double the space complexity over the addressed space, but this is often not over a large block of space.
+%  What we also notice is that the storage space of encrypted data is linear \(\;\in\Theta(1)\) with respect to information size.  It is also important to note that operations can as much as double the space complexity over the addressed space, but this is often not over a large block of space.
 
 \begin{comment}
 \begin{align*}
@@ -179,20 +207,8 @@ The problem of cracking is {\em Soft NP-Complete}
   Finally, we are looking at shrinking our space complexity by migrating to supporting an n-ary system rather than a binary system. This means we'll need to more formally address definitions for our co-sets and ideals.% under \(\mathbb{Z}_{<+,\cdot>}\)
 \end{slide}
 
-\begin{slide}{Mathematical Background}
-Describing the abstract Ideals relations
-\end{slide}
-
-\begin{slide}{Bootstrapping}
-The Power of Bootstraping
-\end{slide}
-
 \begin{slide}{System Resources}
 Memory Used for Project \\ Time to complete \(O(n)\) equivelent operation \\ Projected Space \\ Keysize 
-\end{slide}
-
-\begin{slide}{Significant Difficulties}
-
 \end{slide}
 
 \begin{slide}{Conclusion}
