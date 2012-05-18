@@ -84,6 +84,8 @@ In order for a cryptographic system to be considered \fh we need to make some cl
 
 %\begin{comment}
 \begin{multicols}{2}
+
+\subsection*{{\sc And}}
 \resizebox{\columnwidth}{!}{
 \begin{circuitikz}\draw
 (0,0) node[and port,scale=2.5] (myand) {}
@@ -93,12 +95,12 @@ In order for a cryptographic system to be considered \fh we need to make some cl
 ;\end{circuitikz}
 }
 \begin{align*}
-  c_i\cdot c_j &= \left(p\cdot q_i + n_i + b_i\right)\\&\;\cdot\left(p\cdot q_j + n_j + b_j\right)\\
-  &= p\cdot\hat{q} + \hat{n} + \left(b_i\cdot b_j\right)
+  c_i\cdot c_j &= \left(p\cdot q_i + 2\cdot n_i + b_i\right)\\&\;\cdot\left(p\cdot q_j + 2\cdot n_j + b_j\right)\\
+  &= p\cdot\hat{q} + 2\cdot\hat{n} + \left(b_i\cdot b_j\right)
 \end{align*}
-\columnbreak
 
 
+\subsection*{{\sc Xor}}
 \resizebox{\columnwidth}{!}{
 \begin{circuitikz}\draw
 (0,0) node[xor port,scale=2.5] (myand) {}
@@ -108,9 +110,9 @@ In order for a cryptographic system to be considered \fh we need to make some cl
 ;\end{circuitikz}
 }
 \begin{align*}
-  c_i+ c_j &= \left(p\cdot q_i + n_i + b_i\right)\\&\;+\left(p\cdot q_j + n_j + b_j\right)\\
-  &= p\cdot(q_i+q_j)+(n_i+n_j) \\&\;+ b_i + b_j\\
-  &= p\cdot\hat{q} + \hat{n} +\left(b_i+b_j\right)
+  c_i+ c_j &= \left(p\cdot q_i + 2\cdot n_i + b_i\right)\\&\;+\left(p\cdot q_j + 2\cdot n_j + b_j\right)\\
+%  &= p\cdot(q_i+q_j)+2\cdot(n_i+n_j) \\&\;+ b_i + b_j\\
+  &= p\cdot\hat{q} + 2\cdot\hat{n} +\left(b_i+b_j\right)
 \end{align*}
 
 
@@ -126,17 +128,13 @@ In order for a cryptographic system to be considered \fh we need to make some cl
 \end{comment}
 \end{multicols}
 
-
-
-
 %\end{comment}
 
 %Given a security parameter $\lambda$ we produce a $p \in \{0,1\}^{\lambda^2-1}|1$. Then for every bit $b_i$ we are encrypting we choose a random value $q_i \in \{0,1\}^{\lambda^5}$ as a means of distancing the data from the key. We then choose a random value $n_i \in \{0,1\}^{\lambda-1}|b_i$ which denotes noise. The cipher-bit $c_i = p\cdot q_i + n_i + b_i$. ($|x$ denotes that the value $x$ is concatinated onto the end of the bitstream.)
 
+%Step 3 is only possible because we have chosen to force bit parity for cooresponding $n_k,b_k$ pairs. This forces the $\hat{n}+\hat{b}$ values together to be even. Eventhough they may seperately not be. 
 
-Step 3 is only possible because we have chosen to force bit parity for cooresponding $n_k,b_k$ pairs. This forces the $\hat{n}+\hat{b}$ values together to be even. Eventhough they may seperately not be. 
-
-You have to trust this or do it by hand. (formal proofs not included)
+%You have to trust this or do it by hand. (formal proofs not included)
 
 
 \resizebox{\columnwidth}{!}{\includegraphics{infograph.eps}}
