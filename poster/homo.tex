@@ -40,11 +40,11 @@ Computer Science Department
 \begin{multicols}{2}
 \begin{slide}{Abstract}
 
-We present a formal inquiry of the first fully homomorphic encryption scheme proposed by Craig Gentry in 2008. Moreover we introduce the first implementation of this cipher in the Python programming language. A fully homomorphic encryption scheme enables the execution of arbitrary operations on encrypted data without the decryption key which, put simply, allows for a third party to  store and manipulate sensitive information without the ability to interpret it. 
+\hspace{1em}We present a formal inquiry of the first fully homomorphic encryption scheme proposed by Craig Gentry in 2008. Moreover we introduce the first implementation of this cipher in the Python programming language. A fully homomorphic encryption scheme enables the execution of arbitrary operations on encrypted data without the decryption key which, put simply, allows for a third party to  store and manipulate sensitive information without the ability to interpret it. 
 \parskip 0.5em
 %The applications of an efficient fully homomorphic encryption system are potentially limitless. A contemporary example is cloud based email, where a decentralized server stores and serves encrypted user email. Furthermore, such a system would allow for users to request the server to perform search queries on stored data without loss of privacy. This is a particularly enticing scenario given the recent boom in portable devices and multiparty computation, both of which currently have serious security concerns. 
 
-Our investigation includes a high level synopsis of the mathematics involved in fully homomorphic encryption, a complete demonstration of our implementation in Python, and finally a overview of the space and asymptotic time complexities of the proposed system. 
+\hspace{1em}Our investigation includes a high level synopsis of the mathematics involved in fully homomorphic encryption, a complete demonstration of our implementation in Python, and finally a overview of the space and asymptotic time complexities of the proposed system. 
 
 
 \end{slide}
@@ -127,24 +127,20 @@ Our investigation includes a high level synopsis of the mathematics involved in 
 
 \begin{slide}{Security}
 
+
+
+
 Given a security parameter \(\lambda\) there exists a private key space of 
 
 \[2^{(\lambda^2-2)} - (2^{\lambda^{2-1}})-1\]
 
-The cryptographic hint uses the subset sum problem over a sparse subset. A brute force attack on this scheme requires the space 
+The cryptographic hint uses the subset sum problem over a sparse subset. A brute force attack on this scheme requires the space. With \(\lambda = 8\), \(\beta  = 8^5\), and \(\alpha = \frac{8^5}{2}\), an attacker would need to calculate \(\left(\begin{matrix}\beta\\\alpha\end{matrix}\right)\) subset sums. This would take \(2\cdot 10^{133715000000000000000}\) floating point operations; at a petaflop of computational power this would take \(2\cdot 10^{133715}\) years to brute force the private key.
 
-\[\left(\begin{matrix}\beta = \lambda^5\\\alpha \end{matrix}\right)\approx \beta^\alpha\]
-
-This shows that the security of this fully homomorphic encryption system is rival to that of most contemporary systems.
-
-%The problem of cracking is {\em Soft NP-Complete}
-
-%This is because as the security parameters grows, the searchspace and the cost of the operations grow. 
 \end{slide}
 
 \begin{slide}{Limitations}
 \subsection*{Space Complexity}
-  This cryptographic model has not yet been refined to a practical level. Encrypting data bitwise under these methods, such that the cipher text is cryptographically secure requires a great degree of noise/bloat to hide the parity of our unencrypted message bidgit. 
+\hspace{1em}  This cryptographic model has not yet been refined to a practical level. Encrypting data bitwise under these methods, such that the cipher text is cryptographically secure requires a great degree of noise/bloat to hide the parity of our unencrypted message bidgit. 
 \parskip 0.5em
 
 
@@ -177,13 +173,13 @@ f_{(6\text{ Bytes},64)}&=(512\; GB)\cdot6\cdot 8\\&=24\; TB
 
 \begin{slide}{Next Steps}
 
-The propsed system is effective but not efficent. In order to achive enough speed up and make the system realisitic we propose to distribute server side operations across the Hadoop distributed computing system.
+\hspace{1em}The purposed system is effective but not efficient. In order to achieve enough speed up and make the system realistic we propose to parallelize server side operations across the Hadoop distributed computing system.
 \parskip 1em
 
-Currently our proposed system uses elementry school style long multiplacation, an operation that is N**2 for the number of digts in the operands. Even with Karatusba's algorithm \(\theta( n \lg n)\) implemented in python the system does not achive a suficent speed up. We plan to implement the multiplactions on the video cards of our lab using Pycuda and Fast DFT. This parallelaztion would achive a speed not normallay usable in python.
+\hspace{1em}Currently our proposed system uses elementary school style long multiplication, an operation that is \(N^2\) for the number of digits in the operands. Even with Karatusba's algorithm \(\theta( n \lg n)\) implemented in python the system does not achieve a sufficient speed up. We plan to implement the multiplications on the video cards of our lab using Pycuda and Fast DFT. This parallelization would achieve a speed not normally usable in python.
 
 
-Finally in order to shrink space complexity we plan to explore using n-ary systems rathar than a base-2 implementation. This research would require a more formal address of our co-sets and ideals.
+\hspace{1em}Finally in order to shrink space complexity we plan to explore using n-ary systems rather than a base-2 implementation. This research would require a more formal address of our co-sets and ideals.
 
 
 
@@ -194,7 +190,7 @@ Finally in order to shrink space complexity we plan to explore using n-ary syste
 %Our Findings \\ Further Implementations \\ Python as a Vehicle
 
 \subsection*{Our Implementation}
-\hspace{1em}We were successful in being the first group to implement a fully homomorphic encryption system using the Python programming language. The concerns about the efficiency of Python were surmounted using alternative optimized computation libraries, namely PyPy. We addressed the time and space limitations of this encryption system by utilizing a distributed file system tool called {\em Hadoop} and a cluster of powerful computers available to us in Western's Computer Science Department. 
+\hspace{1em}We were successful in being the first group to implement a fully homomorphic encryption system using the Python programming language. The concerns about the efficiency of Python were surmounted using alternative optimized computation libraries, namely PyPy. We addressed the time and space limitations of this encryption system by utilizing a distributed file system tool called Hadoop and a cluster of powerful computers available to us in Western's Computer Science Department. 
 \parskip 0.5em %0.25em
 \subsection*{Feasibility} 
 \hspace{1em}Even with the resources available to us, the overhead of this encryption scheme make a contemporary model impractical. The space required to encrypt and store a data set with a sufficient security parameter is unreasonable. However, the concept of a fully homomorphic encryption scheme is still in its infancy, and since Craig Gentry's initial dissertation multiple papers have been published containing new and exciting optimizations to the original algorithm. This combined with the rate at which modern hardware is advancing might make the idea of a functional fully homomorphic system possible in the future. 
