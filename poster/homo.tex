@@ -44,6 +44,7 @@ Our investigation includes a high level synopsis of the mathematics involved in 
 
 \end{slide}
 
+\begin{comment}
 \begin{slide}{Definitions}
 In order for a cryptographic system to be considered \fh we need to make some clear definitions availible. It also proves benificial to clearly express why these terms are significant and their relationships to eachother. 
 
@@ -78,6 +79,7 @@ In order for a cryptographic system to be considered \fh we need to make some cl
 
 %We may need to additionally add information about Rings, Prime Ideals, this can be added later. There are likely other definitions that are needed, and will likely be found as the ones above are addressed
 \end{slide}
+\end{comment}
 
 
 \begin{slide}{Circuit probably moved}
@@ -116,35 +118,41 @@ In order for a cryptographic system to be considered \fh we need to make some cl
 \resizebox{\columnwidth}{!}{\includegraphics{infograph.eps}}
 
 
-An asymmetric encryption Scheme E has three algorithms:
-
-
-\section*{KeyGen}
-
-use lambda to generate two keys, a public encryption key pk that is available to everyone, and a secret decryption key sk.
-
-
-\section*{Encrypt}
-
-Will map a message to ciphertext using pk.
-
-\section*{Decrypt}
-
-will map the ciphertext back to the message using sk.
-
-
-Homomorphic Encryption scheme incorporates a fourth algorithm:
-
-
-\section*{Evaluate}
-
-Given pk, will perform operations over ciphertext to produce equivalent encrypted results
+%An asymmetric encryption Scheme E has three algorithms:
+%\section*{KeyGen}
+%use lambda to generate two keys, a public encryption key pk that is available to everyone, and a secret decryption key sk.
+%\section*{Encrypt}
+%Will map a message to ciphertext using pk.
+%\section*{Decrypt}
+%will map the ciphertext back to the message using sk.
+%Homomorphic Encryption scheme incorporates a fourth algorithm:
+%\section*{Evaluate}
+%Given pk, will perform operations over ciphertext to produce equivalent encrypted results%
 
 
 
 \end{slide}
 
 
+\begin{slide}{Components}
+Our implementation is comprised of five functions:
+\\
+
+\subsection*{KeyGen}
+\hspace{1em}Uses \(\lambda\) to generate two keys, a public key that is available to everyone, and a secret key that is only available to the client to be used in decryption. 
+
+\subsection*{Encrypt}
+\hspace{1em}Maps a plaintext message to a ciphertext using the public key.
+
+\subsection*{Decrypt}
+\hspace{1em}Maps a ciphertext back to its original message using the secret key.
+
+\subsection*{Recrypt}
+\hspace{1em}Encrypts a previously encrypted ciphertext using the public key, which effectively reduces the space and increases the integrity of the data. 
+
+\subsection*{Evaluate}
+\hspace{1em}Given the public key and a set of arbitrary operations, this function will execute each instruction over the entire ciphertext and return the encrypted results.
+\end{slide}
 
 \begin{slide}{Limitations}
 \subsection*{Space Complexity}
@@ -177,16 +185,17 @@ f_{(6\text{ Bytes},64)}&=(512\; GB)\cdot6\cdot 8\\&=24\; TB
 
 \begin{slide}{Security}
 
-Given \(\lambda\) as a security Parameter 
+Given a security parameter \(\lambda\) there exists a private key space of 
 
-we have a private key space of \(2^{(\lambda^2-2)} - (2^{\lambda^{2-1}})-1\)
+\[2^{(\lambda^2-2)} - (2^{\lambda^{2-1}})-1\]
 
-The cryptographic hint uses the subset sum problem over a sparse subset. cracking the hint takes up space 
+The cryptographic hint uses the subset sum problem over a sparse subset. A brute force attack on this scheme requires the space 
 
-\[\left(\begin{matrix}\beta = \lambda^5\\\alpha \end{matrix}\right)\approx \beta^\alpha\] produces
+\[\left(\begin{matrix}\beta = \lambda^5\\\alpha \end{matrix}\right)\approx \beta^\alpha\]
 
+This shows that the security of this fully homomorphic encryption system is rival to that of most contemporary systems.
 
-The problem of cracking is {\em Soft NP-Complete}
+%The problem of cracking is {\em Soft NP-Complete}
 
 %This is because as the security parameters grows, the searchspace and the cost of the operations grow. 
 \end{slide}
