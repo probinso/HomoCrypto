@@ -3,9 +3,9 @@ default: homo.tex
 	#latex -no-shell-escape homo.tex
 	#sage homo.sagetex.sage
 	latex homo
-	bibtex homo
-	latex homo
-	latex homo
+	#bibtex homo
+	#latex homo
+	#latex homo
 	dvips homo.dvi
 	ps2pdf homo.ps
 

@@ -41,7 +41,7 @@ Computer Science Department
 \begin{slide}{Abstract}
 
 We present a formal inquiry of the first fully homomorphic encryption scheme proposed by Craig Gentry in 2008. Moreover we introduce the first implementation of this cipher in the Python programming language. A fully homomorphic encryption scheme enables the execution of arbitrary operations on encrypted data without the decryption key which, put simply, allows for a third party to  store and manipulate sensitive information without the ability to interpret it. 
-\parskip 1em
+
 %The applications of an efficient fully homomorphic encryption system are potentially limitless. A contemporary example is cloud based email, where a decentralized server stores and serves encrypted user email. Furthermore, such a system would allow for users to request the server to perform search queries on stored data without loss of privacy. This is a particularly enticing scenario given the recent boom in portable devices and multiparty computation, both of which currently have serious security concerns. 
 
 Our investigation includes a high level synopsis of the mathematics involved in fully homomorphic encryption, a complete demonstration of our implementation in Python, and finally a overview of the space and asymptotic time complexities of the proposed system. 
@@ -49,56 +49,17 @@ Our investigation includes a high level synopsis of the mathematics involved in 
 
 \end{slide}
 
-\begin{comment}
-\begin{slide}{Definitions}
-In order for a cryptographic system to be considered \fh we need to make some clear definitions availible. It also proves benificial to clearly express why these terms are significant and their relationships to eachother. 
-
-\begin{itemize}
-\item Circuit Operations
-\begin{itemize}
-\item Fundamental Gates
-
-  The most basic logical operations; AND, OR, and NOT. 
-%\item Polynomials
-\end{itemize}
-\item Bootstrapping
-
-  Re-encrypting already encrypted data using elements from the original encryption circuit.
-\begin{itemize}
-\item Compact
-%\item Circular Security
-\end{itemize}
-\item Secure Problems
-\begin{itemize}
-\item Approximate GCD
-
-\item Subset Sum Problem 
-
-  Given a set of rationals, is there a non-empty set whose sum is equal to $S$ where $S$ is a random integer. In this encryption scheme, $S$ is used as the secret key.
-%\item Computational Complexity
-
-\end{itemize}
-
-\end{itemize}
+\begin{slide}{Components}
 
 
-%We may need to additionally add information about Rings, Prime Ideals, this can be added later. There are likely other definitions that are needed, and will likely be found as the ones above are addressed
-\end{slide}
-\end{comment}
-
-
-\begin{slide}{Circuit probably moved}
-
-%\begin{comment}
 \begin{multicols}{2}
 
-\subsection*{{\sc And}}
 \resizebox{\columnwidth}{!}{
 \begin{circuitikz}\draw
-(0,0) node[and port,scale=2.5] (myand) {}
-(myand.in 1) node[anchor=east] {\({b_0}\)}
-(myand.in 2) node[anchor=east] {\({b_1}\)}
-(myand.out) node[anchor=west] {\({b_0 \cdot b_1}\;(\text{mod }2)\)}
+(0,0) node[and port,scale=1.5] (myand) {}
+(myand.in 1) node[anchor=east] {{\small \({b_0}\)}}
+(myand.in 2) node[anchor=east] {{\small \({b_1}\)}}
+(myand.out) node[anchor=west] {{\small\({b_0 \cdot b_1}\;(\text{mod }2)\)}}
 ;\end{circuitikz}
 }
 \begin{align*}
@@ -107,13 +68,12 @@ In order for a cryptographic system to be considered \fh we need to make some cl
 \end{align*}
 
 
-\subsection*{{\sc Xor}}
 \resizebox{\columnwidth}{!}{
 \begin{circuitikz}\draw
-(0,0) node[xor port,scale=2.5] (myand) {}
-(myand.in 1) node[anchor=east] {\({b_0}\)}
-(myand.in 2) node[anchor=east] {\({b_1}\)}
-(myand.out) node[anchor=west] {\({b_0 + b_1}\;(\text{mod } 2)\)}
+(0,0) node[xor port,scale=1.5] (myand) {}
+(myand.in 1) node[anchor=east] {{\small\({b_0}\)}}
+(myand.in 2) node[anchor=east] {{\small\({b_1}\)}}
+(myand.out) node[anchor=west] {{\small \({b_0 + b_1}\;(\text{mod } 2)\)}}
 ;\end{circuitikz}
 }
 \begin{align*}
@@ -124,15 +84,7 @@ In order for a cryptographic system to be considered \fh we need to make some cl
 
 
 
-\begin{comment}
-\resizebox{\columnwidth}{!}{
-\begin{circuitikz}\draw
-(0,0) node[not port,scale=2.5] (not) {}
-(not.in) node[anchor=east] {\({b_0}\)}
-(not.out) node[anchor=west] {\(1-{b_0}\;(\text{mod } 2)\)}
-;\end{circuitikz}
-}
-\end{comment}
+
 \end{multicols}
 
 %\end{comment}
@@ -158,14 +110,8 @@ In order for a cryptographic system to be considered \fh we need to make some cl
 %\section*{Evaluate}
 %Given pk, will perform operations over ciphertext to produce equivalent encrypted results%
 
-
-
-\end{slide}
-
-
-\begin{slide}{Components}
 Our implementation is comprised of five functions:
-\\
+
 
 \subsection*{KeyGen}
 \hspace{1em}Uses \(\lambda\) to generate two keys, a public key that is available to everyone, and a secret key that is only available to the client to be used in decryption. 
@@ -181,6 +127,25 @@ Our implementation is comprised of five functions:
 
 \subsection*{Evaluate}
 \hspace{1em}Given the public key and a set of arbitrary operations, this function will execute each instruction over the entire ciphertext and return the encrypted results.
+
+
+\end{slide}
+
+\begin{slide}{Security}
+
+Given a security parameter \(\lambda\) there exists a private key space of 
+
+\[2^{(\lambda^2-2)} - (2^{\lambda^{2-1}})-1\]
+
+The cryptographic hint uses the subset sum problem over a sparse subset. A brute force attack on this scheme requires the space 
+
+\[\left(\begin{matrix}\beta = \lambda^5\\\alpha \end{matrix}\right)\approx \beta^\alpha\]
+
+This shows that the security of this fully homomorphic encryption system is rival to that of most contemporary systems.
+
+%The problem of cracking is {\em Soft NP-Complete}
+
+%This is because as the security parameters grows, the searchspace and the cost of the operations grow. 
 \end{slide}
 
 \begin{slide}{Limitations}
@@ -212,39 +177,19 @@ f_{(6\text{ Bytes},64)}&=(512\; GB)\cdot6\cdot 8\\&=24\; TB
 
 \end{slide}
 
-\begin{slide}{Security}
-
-Given a security parameter \(\lambda\) there exists a private key space of 
-
-\[2^{(\lambda^2-2)} - (2^{\lambda^{2-1}})-1\]
-
-The cryptographic hint uses the subset sum problem over a sparse subset. A brute force attack on this scheme requires the space 
-
-\[\left(\begin{matrix}\beta = \lambda^5\\\alpha \end{matrix}\right)\approx \beta^\alpha\]
-
-This shows that the security of this fully homomorphic encryption system is rival to that of most contemporary systems.
-
-%The problem of cracking is {\em Soft NP-Complete}
-
-%This is because as the security parameters grows, the searchspace and the cost of the operations grow. 
-\end{slide}
 
 
 
-%\end{multicols}
-%\begin{multicols}{3}
+
 \begin{slide}{Next Steps}
   What we have accomplished is effective but not efficient. Although we recognize that this cryptographic system is not a practical one, we would like to make it as realistic as possible. Because we are dealing with voluminous data, we are planning to distribute the storage and operations load accross an entire lab using {\em Hadoop} distributed systems. 
-\parskip 1em 
+%\parskip 1em 
 
   Because we are working with such large numbers, it is additionally very time-expensive to perform multiplication. The kids multiplication algorithm is \(\in\Theta(n^2)\), but even with Karatsuba's algorithm \(\approx\Theta(n\cdot\lg^* n)\) implemented in python we do not recieve sufficient speed up. We are planning to shuffle this task onto the video card of each machine using {\em PyCuda}, so that we can perform faster DFTs. By doing this we can gain speed in parallelization that we are normally unable to recieve with python derivatives.
 
   Finally, we are looking at shrinking our space complexity by migrating to supporting an n-ary system rather than a binary system. This means we'll need to more formally address definitions for our co-sets and ideals.% under \(\mathbb{Z}_{<+,\cdot>}\)
 \end{slide}
 
-\begin{slide}{System Resources}
-Memory Used for Project \\ Time to complete \(O(n)\) equivelent operation \\ Projected Space \\ Keysize 
-\end{slide}
 
 \begin{slide}{Conclusion}
 %Our Findings \\ Further Implementations \\ Python as a Vehicle
@@ -256,40 +201,15 @@ Memory Used for Project \\ Time to complete \(O(n)\) equivelent operation \\ Pro
 \hspace{1em}Even with the resources available to us, the overhead of this encryption scheme make a contemporary model impractical. The space required to encrypt and store a dataset with a sufficient security parameter is unreasonable. However, the concept of a fully homomorphic encryption scheme is still in its infancy, and since Craig Gentry's initial dissertation multiple papers have been published containing new and exciting optimizations to the original algorithm. This combined with the rate at which modern hardware is advancing might make the idea of a functional fully homomorphic system possible in the future. 
 
 \end{slide}
-\begin{slide}{Circuit Diagram To Be Moved}
 
-%\begin{comment}
-\begin{circuitikz}[scale=2.5]\draw
-% begin string compare
-(0,6) node[xor port,scale=2.5] (myxor0){}
-(myxor0.in 1) node[anchor=east] {\(s_0\)}
-(myxor0.in 2) node[anchor=east] {\(c_{8\cdot i}\)}
-
-(0,4) node[xor port,scale=2.5] (myxor1){}
-(myxor1.in 1) node[anchor=east] {\(s_1\)}
-(myxor1.in 2) node[anchor=east] {\(c_{8\cdot i + 1}\)}
-
-
-{ [dotted, ultra thick] (-1,3) -- (-1,1) }
-
-(0,0) node[xor port,scale=2.5] (myxorn){}
-(myxorn.in 1) node[anchor=east] {\(s_{8\cdot n}\)}
-(myxorn.in 2) node[anchor=east] {\(c_{8\cdot i + 8\cdot n}\)}
-
-(2,3) node[nor port,scale=2.5] (myor) {}
-(myxor0.out) -| (myor.in 1) {}
-(myxorn.out) -| (myor.in 2) {}
-(myxor1.out) -| (myor.in 1) {}
-% begin carry adder
-;\end{circuitikz}
-%\end{comment}
-\end{slide}
-
+\begin{comment}
 \renewcommand{\refname}{}
 \begin{slide}{Bibliography}
 \nocite{*}
 \bibliography{mybib}{}
 \bibliographystyle{plain}
 \end{slide}
+\end{comment}
 \end{multicols}
+
 \end{document}
