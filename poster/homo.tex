@@ -7,16 +7,20 @@
 \usepackage{verbatim}
 %\usepackage{sagetex}
 \usepackage{circuitikz}
+\usepackage{url}
+\usepackage{cite}
 
 %\usepackage{pst-all}
 %\usepackage{pst-circ}
 
 \usepackage{titlesec}
-\titlespacing*{\subsubsection}{0pt}{*2}{*0}
+\titlespacing*{\subsubsection}{0pt}{*0}{*0}
 \titlespacing*{\subsection}{0pt}{0pt}{*0}
+\titlespacing*{\section}{0pt}{0pt}{*0}
 
 \newcommand{\Bold}{\mathbf}
-
+\setlength{\paperwidth}{34in}
+\setlength{\paperheight}{45in}
 \title{Homomorphic Cryptosystems}
 
 \author{
@@ -41,6 +45,7 @@ We present a formal inquiry of the first fully homomorphic encryption scheme pro
 %The applications of an efficient fully homomorphic encryption system are potentially limitless. A contemporary example is cloud based email, where a decentralized server stores and serves encrypted user email. Furthermore, such a system would allow for users to request the server to perform search queries on stored data without loss of privacy. This is a particularly enticing scenario given the recent boom in portable devices and multiparty computation, both of which currently have serious security concerns. 
 
 Our investigation includes a high level synopsis of the mathematics involved in fully homomorphic encryption, a complete demonstration of our implementation in Python, and finally a overview of the space and asymptotic time complexities of the proposed system. 
+
 
 \end{slide}
 
@@ -232,7 +237,7 @@ This shows that the security of this fully homomorphic encryption system is riva
   What we have accomplished is effective but not efficient. Although we recognize that this cryptographic system is not a practical one, we would like to make it as realistic as possible. Because we are dealing with voluminous data, we are planning to distribute the storage and operations load accross an entire lab using {\em Hadoop} distributed systems. 
 \parskip 1em 
 
-  Because we are working with such large numbers, it is additionally very time-expensive to perform multiplication. The kids multiplication algorithm is \(\in\Theta(n^2)\), but even with Karatsuba's algorithm \(\approx\Theta(n\cdot\lg n)\) implemented in python we do not recieve sufficient speed up. We are planning to shuffle this task onto the video card of each machine using {\em PyCuda}, so that we can perform faster DFTs. By doing this we can gain speed in parallelization that we are normally unable to recieve with python derivatives.
+  Because we are working with such large numbers, it is additionally very time-expensive to perform multiplication. The kids multiplication algorithm is \(\in\Theta(n^2)\), but even with Karatsuba's algorithm \(\approx\Theta(n\cdot\lg^* n)\) implemented in python we do not recieve sufficient speed up. We are planning to shuffle this task onto the video card of each machine using {\em PyCuda}, so that we can perform faster DFTs. By doing this we can gain speed in parallelization that we are normally unable to recieve with python derivatives.
 
   Finally, we are looking at shrinking our space complexity by migrating to supporting an n-ary system rather than a binary system. This means we'll need to more formally address definitions for our co-sets and ideals.% under \(\mathbb{Z}_{<+,\cdot>}\)
 \end{slide}
@@ -271,12 +276,13 @@ Our Findings \\ Further Implementations \\ Python as a Vehicle
 % begin carry adder
 ;\end{circuitikz}
 %\end{comment}
-
 \end{slide}
 
-
+\renewcommand{\refname}{}
 \begin{slide}{Bibliography}
-Thats where the bibliography goes
+\nocite{*}
+\bibliography{mybib}{}
+\bibliographystyle{plain}
 \end{slide}
 \end{multicols}
 \end{document}
