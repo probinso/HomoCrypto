@@ -19,7 +19,7 @@ def mods(x,n):
 def getNPQ(N):
     # N is a security parameter
     P = N**2
-    Q = N**5
+    Q = N**3
     return (N,P,Q)
 
 
