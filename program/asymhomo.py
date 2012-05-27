@@ -3,6 +3,7 @@ import random
 from fractions import Fraction
 from math import ceil
 from math import log
+from helpers import *
 
 debug=True
 #Asym PHE Helper Functions
@@ -10,11 +11,12 @@ def privateKeyGen(P):
 	return genKey(P)
 
 
-def distribute(sk,N,Q):
+def distribute(sk,N,Q):	
 	q=random.randrange(0,(2**((N**5)))//sk)
 	r=random.randrange(-1*(2**N),2**N)
 	return sk*q+r
-	
+
+
 def publicKeyGen(sk,N):
 	N,P,Q=getNPQ(N)
 	pk=[]
@@ -42,7 +44,7 @@ def asymKeyGen(N):
 
 
 #message is an array pk is a public key array 
-def encrypt(message,pk,N):
+def encrypt(message,pk,y,N):
 	"""
 	  The code above is not secure. It is likely that randomSubSetSum(pk)
 	  will introduce a constant of too much noise and because these values
@@ -187,7 +189,7 @@ def fheEncrypt(message,pk,y,N):
 	  N  = security parameter 
 	"""
 	
-	c = encrypt(message,pk,N)
+	c = encrypt(message,pk,y,N)
 	cipher = [(x,multCipherHint(x,y)) for x in c]
 	# code below has been abandoned
 	#for i in range(len(c)):
@@ -210,6 +212,9 @@ def fheDecrypt(cy,S):
 	
 	message=[((x[0]%2)+(hintsum(x[1],S) %2))%2 for x in cy]
 	
+	
+	
+	
 	return message
 	#for i in cy:
 	#	c=i[0] # cipher text
@@ -217,7 +222,6 @@ def fheDecrypt(cy,S):
 	#	#message.append(abs( mods((mods(c,2) + mods(hintsum(y,S),2)),2)))
 	#	message.append((c%2)^hintsum(y,S)%2)
 	#return message
-
 
 def roundFrac(x):
 	y = int(x)
@@ -227,53 +231,23 @@ def roundFrac(x):
 
 #This is doing the summing the wrong values
 def hintsum(y,S):
-	#z=0.0
-	#for i in S:
-	#	z+=y[i]
-	dasum=sum([y[i] for i in S])
-	x=int(dasum)
-	dasum-=x
-	if(dasum-Fraction(1,2)>0):
-		x+=1
-	return x
-	#return int(round(z))
+	val = roundFrac(sum([y[i] for i in S]))
+	return val
+
 
 #Used to Ecnrypt the Secret Key List with a new public Key
 
-def encryptSk(sk,pk,N):
+def encryptSk(sk,pk,y,N):
 #the Sk list is a bunch of indecies. In order to do a recrypt it would need to be 
 #A Vector of 1's and zeros as Gentry Described. This function uses the public key to encrypt the secret key
 #and returns encS. Client would need to make this and send it to the server
-	encS=[0]*len(pk[1])
-	#print"Length of encS is",len(encS)
-	x=0
-	for i in sk[1]:
-		
-	#	print "On Round ",x
-		x+=1
+	encS=[0]*len(y)
+	
+	for i in sk:
 		encS[i]=1
 	
-	return encrypt(encS,pk[0],N)
-	
-#Given two equal length lists dot product them. Used by FHE Recrypt to do the summation of Y vector
-#And the encrypted S Vector
-def dotProduct(L1,L2):
-	sp=0
-	
-	for i in range(len(L1)):
-		sp+=L1[i]*L2[i]
-	return sp
-			     
+	return encrypt(encS,pk,y,N)
 
-
-def intToBinList(i):
-    
-    return map(int,list(bin(i))[2:])
-
-
-def binListToInt(l):
-    return int(''.join(map(str,l)),2)
-			     
 #Recrypt cy in place, return refreashed Ciphertext Tuples
 #CY is a list of tuples. cy[0][0] is an encrypted bit cy[0][1] is it's y vector
 #def fheDumbRecrypt(cy,y,pk,N):
@@ -283,21 +257,26 @@ def binListToInt(l):
 #		c[0] = c[0] - roundFrac(Fraction(sum(map(*,zip (c[0],y))),apk))
 	
 	
-def fheRecrypt(cy,pk,encS,N):
-	"""FHE Recrypt works as follows:
-	*Convert Each Cipher bit into it's binary representation. If i[0] is a base ten integer representing a bit, it's 
-	Bitwise representation is a list of zero's and ones. there are lg2(i[0
-	elements in the list
-	*Given that bitwise representaiton encrypt each bit. The given cipher bit is now doubly encrypted
-	*Given the doubly encrypted list, Decrypted it using the encrypted sk 
-	ector. The result should be a list of bits
-	that sum up to the original cipher. 
-	*Use the binlistToInt helper function to turn it back into a base 10 integer
-	representing the original encrypted bit"""
-	for i in range(len(cy)):
-		fresh=int((cy[i][0])-mods(dotProduct(cy[i][1],encS),pk[0][0]))	 
+def fheRecrypt(cy,pk,y,encS,N):
+	"""
+	FHE Recrypt works as follows:
+	"""
+	
+	cout = cy[::]
+	
+	for i,encBit in enumerate(cout):
+		fresh = encBit[0]-mods(
+			dotProduct(encBit[1],encS)
+			,pk[0])
 		
-		cy[i]=(fresh,multCipherHint(fresh,pk[1]))
+		#fresh=int((cy[i][0])-mods(dotProduct(cy[i][1],encS),pk[0][0]))	 
+		
+		cout[i] = (fresh,multCipherHint(fresh,y))
+		
+		#cy[i]=(fresh,multCipherHint(fresh,pk[1]))
+		
+		
+		
 		#ciphered=intToBinList(i[0])
 		#Do an FHE encrypt with an already chosen key
 		#ciphered=doubleEncrypt(ciphered,pk,y,N)
@@ -305,7 +284,9 @@ def fheRecrypt(cy,pk,encS,N):
 		#Extract the 
 		#i[0]=binListToInt(message)
 		#i[1]=multCipherHint(i[0],y)
-	return cy
+	print " input -> ",type(cy),type(cy[0]),type(cy[0][0])
+	print "output -> ",type(cout),type(cout[0]),type(cout[0][0])
+	return cout
 
 
 #FHE Encrypt with Given pk rather than rss p
@@ -327,27 +308,19 @@ def doubleDecrypt(cy,encS):
 	return message	
 	
 def go(secure,message):
+	#
+	N,P,Q = getNPQ(secure)
+	(sk,S),(pk,y) = fheKeyGen(N)
 	
-	N,P,Q=getNPQ(secure)
-	"""print message
-	(sk,S),(pk,y) = fheKeyGen(secure)
-	print "secret key :",sk
-	#print "public keys:",
-	#for i in pk:
-	#	print i%2,
-	print
-	print "finished keygen"
-	cipher = fheEncrypt(message,pk,y,secure)
-	print "finished encrypt"
-	print fheDecrypt(cipher,S)"""
+	print "keygen   :: ",sk
+	print "indexes  :: ",S
 	
-	print "Message=", message
+	print "-----------------------------"
 	
-	sk=privateKeyGen(P)
-	print "Finished SK Gen"
-	pk=publicKeyGen(sk,N)
-	print "public keys :: ", [x % 2 for x in pk[:5]]
-	print "Finished Key Gens"
-	cipher=encrypt(message,pk,N)
-	print "finished Encrypt"
-	print "Decrypted Message : ",decrypt(cipher,sk)
+	cipher = fheEncrypt(message,pk,y,N)
+	
+	print "encrypt  :: ", [int(i[0] %2) for i in cipher]
+	
+	remess = map(int,fheDecrypt(cipher,S))
+	print "decrypt  :: ", remess
+	
