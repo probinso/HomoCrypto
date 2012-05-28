@@ -210,9 +210,9 @@ def fheDecrypt(cy,S):
 	  tupples?
 	"""
 	
+	
+	#message=[  (x[0]%2 + hintsum(x[1],S)) %2 for x in cy] # this is wrong
 	message=[((x[0]%2)+(hintsum(x[1],S) %2))%2 for x in cy]
-	
-	
 	
 	
 	return message
@@ -223,14 +223,18 @@ def fheDecrypt(cy,S):
 	#	message.append((c%2)^hintsum(y,S)%2)
 	#return message
 
+"""
 def roundFrac(x):
 	y = int(x)
+	#print y
 	if y - x > Fraction(1,2):
 		y+=1
 	return y
+"""
 
 #This is doing the summing the wrong values
 def hintsum(y,S):
+	
 	val = roundFrac(sum([y[i] for i in S]))
 	return val
 
@@ -264,14 +268,18 @@ def fheRecrypt(cy,pk,y,encS,N):
 	
 	cout = cy[::]
 	
+	
+	
 	for i,encBit in enumerate(cout):
-		fresh = encBit[0]-mods(
-			dotProduct(encBit[1],encS)
-			,pk[0])
+		fresh = encBit[0]-mods(dotProduct(encBit[1],encS),pk[0])
 		
-		#fresh=int((cy[i][0])-mods(dotProduct(cy[i][1],encS),pk[0][0]))	 
 		
-		cout[i] = (fresh,multCipherHint(fresh,y))
+		
+		
+		#fresh=int((cy[i][0])-mods(dotProduct(cy[i][1],encS),pk[0][0])) 
+		
+		#cout[i] = (fresh ,[roundFrac(fresh * x) for x in y])
+		cout[i] = (fresh,multCipherHint(encBit[0],y))
 		
 		#cy[i]=(fresh,multCipherHint(fresh,pk[1]))
 		
