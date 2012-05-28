@@ -211,6 +211,8 @@ def fheDecrypt(cy,S):
 	"""
 	
 	
+	
+	
 	#message=[  (x[0]%2 + hintsum(x[1],S)) %2 for x in cy] # this is wrong
 	message=[((x[0]%2)+(hintsum(x[1],S) %2))%2 for x in cy]
 	
@@ -266,12 +268,33 @@ def fheRecrypt(cy,pk,y,encS,N):
 	FHE Recrypt works as follows:
 	"""
 	
-	cout = cy[::]
+	# fhedecrypt
+	#message=[((x[0]%2)+(hintsum(x[1],S) %2))%2 for x in cy]
 	
+	# hintsum
+	#val = roundFrac(sum([y[i] for i in S]))
+	
+	
+	"""
+	for (i= 0; i < S_1; i++){
+	  d = (B_j * c mod 2p ) // note that d \isin [0,2)
+	  for (j = 0; j < T; j++){
+	    C_i,j = encrypt(floor(d))*c_j mod p
+	    d = (d - floor(d))*2
+	    
+	"""
+	
+	cout = cy[::] 
+	
+	
+	intToBinList(i)
+	
+	
+	"""
 	
 	
 	for i,encBit in enumerate(cout):
-		fresh = encBit[0]-mods(dotProduct(encBit[1],encS),pk[0])
+		fresh = encBit[0] #-mods(dotProduct(encBit[1],encS),pk[0])
 		
 		
 		
@@ -280,6 +303,7 @@ def fheRecrypt(cy,pk,y,encS,N):
 		
 		#cout[i] = (fresh ,[roundFrac(fresh * x) for x in y])
 		cout[i] = (fresh,multCipherHint(encBit[0],y))
+			   
 		
 		#cy[i]=(fresh,multCipherHint(fresh,pk[1]))
 		
@@ -294,6 +318,7 @@ def fheRecrypt(cy,pk,y,encS,N):
 		#i[1]=multCipherHint(i[0],y)
 	print " input -> ",type(cy),type(cy[0]),type(cy[0][0])
 	print "output -> ",type(cout),type(cout[0]),type(cout[0][0])
+	"""
 	return cout
 
 

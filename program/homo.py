@@ -23,9 +23,6 @@ def getNPQ(N):
     return (N,P,Q)
 
 
-def bitLims(B):
-    return (2**(B-1),(2**B)-1)
-
 def genKey(P):
    kn,kx = bitLims(P)
    k = randint(kn,kx)
@@ -92,12 +89,11 @@ def myadd(L1,L2):
    # also the carry bit gets way out of
    # controle. There should be a moduluo
    # however I have not gotten to that.
-   Z = zip(L1,L2)
-   Z.reverse()
+   Z = zip(L1,L2)[::-1]
    # the reverse is needed to preserve the
    # endian of this data.
    C = [0]
-      
+   
    for x in Z:
       C = [carry(x[0],x[1],C[0])] + C
    
