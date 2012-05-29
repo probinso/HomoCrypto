@@ -156,8 +156,8 @@ def makeMult():
         #       x  B  o  t  
         #       ----------- 
         #         Tt ot pt  ['Pairs' denotes these entries
-        #      To oo po  s    without the s padding with
-        # + TB oB pB  s  s    as represented by 'signed' ]
+        #      To oo po  0    without the s padding with
+        # + TB oB pB  0  0    as represented by 'signed' ]
         # -----------------
         
         for i,_ in enumerate(Pairs):
