@@ -4,7 +4,7 @@ from random import randrange
 
 def intToBinList(i):
     # turns integer into binary list representation
-    return map(int,bin(i)[2:])
+    return [0]+map(int,bin(i)[2:])
 
 def binListToInt(l):
     # turns binary list into integer represenation

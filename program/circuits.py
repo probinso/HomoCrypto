@@ -72,6 +72,13 @@ def myadd(L1,L2):
       # provided for the adder
       return A*B+A*C+B*C
    
+   convert = makeFixedWidthConverter(max(len(L1),len(L2))+1)
+   # we choose the max length + 1 to satisfy carry bits, without 
+   #
+   
+   L1 = convert(L1)
+   L2 = convert(L2)
+   
    # apparently reverse() is an in-place
    # side-effects driven procedure
    #
@@ -86,7 +93,7 @@ def myadd(L1,L2):
    for x in Z:
       C = [carry(x[0],x[1],C[0])] + C
    
-   C = zip([0]+L1,[0]+L2,C)
+   C = zip(L1,L2,C[1:])
    return map(lambda x: x[0]+x[1]+x[2],C)
 
 def makeFixedAddr(D):
@@ -117,6 +124,8 @@ def makeFixedAddr(D):
 Add16 = makeFixedAddr(16) 
 
 def makeMult():
+    # positive integer multiplier ... couldn't get past
+    # two's complement for multiply without quereying bits
     def identTop(L1,L2):
         # this is used to minimize volume of noise 
         # in circuit. The smaller of two bit strings
@@ -133,13 +142,16 @@ def makeMult():
     
     def Mult(L1,L2):
         # bitwize multiplier 
+        # only works with positive numbers 
         
         Top,Bot = identTop(L1,L2)    # makes circuit depth shorter
-        signed = bxor(Top[0],Bot[0]) # keeps track of negatives
         
-        Pairs = map(tand,[zip(Top,[bit]*len(Top)) for bit in Bot])
-        Pairs = Pairs[::-1]
-        #                   s = (T xor B)
+        Pairs =[ map(tand,
+                     zip(Top,[bit]*len(Top)))
+                     for bit in Bot[::-1]
+                     ]
+        
+        #                   s = (T xor B) ... not used
         #          T  o  p  
         #       x  B  o  t  
         #       ----------- 
@@ -147,16 +159,19 @@ def makeMult():
         #      To oo po  s    without the s padding with
         # + TB oB pB  s  s    as represented by 'signed' ]
         # -----------------
-        for i,_ in enumerate(Bot):
+        
+        for i,_ in enumerate(Pairs):
             for j in range(i):
-                Pairs[i].append(signed) 
+                Pairs[i].append(0)
                 # this could be changed if we can insure 
                 # the numbers we are multiplying are all 
                 # positive. 
         
         return reduce(lambda a,b: myadd(a,b),Pairs)
+    return Mult
 
 MULT = makeMult()
+
 """
 Others
 """
