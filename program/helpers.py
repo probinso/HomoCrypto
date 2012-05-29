@@ -40,3 +40,18 @@ def mods(x,n):
 
 def parityList(L):
     return map(lambda x : int(x%2), L)
+
+def intListToBinList(i):
+	#takes a string and returns a list of binary representation of each letter
+	newlist =[]
+	word = list(i)
+	for letter in word:
+		newlist.append(intToBinList(ord(letter)))
+	return newlist
+def wordBinListToString(l):
+	#takes a list of binary representations of letters and returns a string
+	word =""
+	for letter in l:
+		word += chr(binListToInt(letter))
+	return word
+
