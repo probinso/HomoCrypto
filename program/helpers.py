@@ -48,10 +48,29 @@ def intListToBinList(i):
 	for letter in word:
 		newlist.append(intToBinList(ord(letter)))
 	return newlist
+
 def wordBinListToString(l):
 	#takes a list of binary representations of letters and returns a string
 	word =""
 	for letter in l:
 		word += chr(binListToInt(letter))
 	return word
+
+def makeFixedWidthConverter(D):
+    # takes in a fixed width and produces 
+    # a function that takes a binary represenation
+    # of an integer, to a fixed width equivelent
+    def toFixedWidth(L):
+        # we assume that the input comes in with 
+        # a leading bit denoting the sign
+        assert(len(L) <= D)
+        if len(L) == D:
+            return L
+        #store = [0]*D
+        #store[0] = L[0]
+        store = [L[0]]*D
+        #store[(-1*len(L)) + 1:] = L[1:][::]
+        store[-1*len(L):] = L[::]
+        return store
+    return toFixedWidth
 

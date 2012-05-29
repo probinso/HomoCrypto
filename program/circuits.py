@@ -1,3 +1,5 @@
+from helpers import *
+
 
 """
 This section is for trivial circuits
@@ -50,8 +52,8 @@ def cplex(G):
     # takes in a binary operator and turns it into
     # a cross circuit for two lists of equal size 
     #
-    # the second list may be larger, as the remainder
-    # will just be dropped
+    # one list may be longer, as the remainder
+    # will just be dropped from the longer
     tG = lambda (a,b):G(a,b)
     def plex(A,B):
         assert(len(A) > 0)
@@ -70,6 +72,13 @@ def myadd(L1,L2):
       # provided for the adder
       return A*B+A*C+B*C
    
+   convert = makeFixedWidthConverter(max(len(L1),len(L2))+1)
+   # we choose the max length + 1 to satisfy carry bits, without 
+   #
+   
+   L1 = convert(L1)
+   L2 = convert(L2)
+   
    # apparently reverse() is an in-place
    # side-effects driven procedure
    #
@@ -84,8 +93,7 @@ def myadd(L1,L2):
    for x in Z:
       C = [carry(x[0],x[1],C[0])] + C
    
-   
-   C = zip([0]+L1,[0]+L2,C)
+   C = zip(L1,L2,C[1:])
    return map(lambda x: x[0]+x[1]+x[2],C)
 
 def makeFixedAddr(D):
@@ -94,29 +102,75 @@ def makeFixedAddr(D):
         # provided for the adder
         return mxor([band(A,B),band(A,C),band(B,C)])
     
-    def toFixedWidth(L):
-        # we assume that the input comes in with 
-        # a leading bit denoting the sign
-        store = [L[0]]*D
-        store[-1*len(L):] = L[::]
-        return store
+    toFixedWidth = makeFixedWidthConverter(D)
     
     def fixedAddr(L1,L2):
+        # this is a fixed width adder for binary lists with 
+        # a signed bit head. 
         L1 = toFixedWidth(L1)
         L2 = toFixedWidth(L2)
         
-        Z = zip(L1,L2)        
+        Z = zip(L1,L2)[::-1]
         C = [0]
         for x in Z:
-            C = C + [carry(x[0],x[1],C[-1])]
-            
+            C = [carry(x[0],x[1],C[0])]+C
+        
         C = zip(L1,L2,C[1:]) # drop greatest digit 
         
         return map(lambda (a,b,c):mxor([a,b,c]),C)
-
+    
     return fixedAddr
 
+Add16 = makeFixedAddr(16) 
 
+def makeMult():
+    # positive integer multiplier ... couldn't get past
+    # two's complement for multiply without quereying bits
+    def identTop(L1,L2):
+        # this is used to minimize volume of noise 
+        # in circuit. The smaller of two bit strings
+        # should be treated as the bottom half of the 
+        # bit shift adder.
+        Top = L1 # multiplicand
+        Bot = L2 # multiplier
+        if len(L1) < len(L2):
+            Top = L2
+            Bot = L1
+        return (Top,Bot)
+    
+    tand = lambda (a,b) : band(a,b)
+    
+    def Mult(L1,L2):
+        # bitwize multiplier 
+        # only works with positive numbers 
+        
+        Top,Bot = identTop(L1,L2)    # makes circuit depth shorter
+        
+        Pairs =[ map(tand,
+                     zip(Top,[bit]*len(Top)))
+                     for bit in Bot[::-1]
+                     ]
+        
+        #                   s = (T xor B) ... not used
+        #          T  o  p  
+        #       x  B  o  t  
+        #       ----------- 
+        #         Tt ot pt  ['Pairs' denotes these entries
+        #      To oo po  s    without the s padding with
+        # + TB oB pB  s  s    as represented by 'signed' ]
+        # -----------------
+        
+        for i,_ in enumerate(Pairs):
+            for j in range(i):
+                Pairs[i].append(0)
+                # this could be changed if we can insure 
+                # the numbers we are multiplying are all 
+                # positive. 
+        
+        return reduce(lambda a,b: myadd(a,b),Pairs)
+    return Mult
+
+MULT = makeMult()
 
 """
 Others
