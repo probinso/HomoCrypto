@@ -42,7 +42,6 @@ def randomSubSetSum(pk):
     #Defaults to 2 rite now get over it
     return sum([choice(pk[1:]) for i in range(10)])
 
-
 def asymKeyGen(N):
     N,P,Q=getNPQ(N)
     sk=privateKeyGen(P)
