@@ -7,11 +7,11 @@ import math
 
 
 def mods(x,n):
-   # this is our symmetric modulou
-   a = x % n
-   b = x % (-1*n)
-   if abs(a)<abs(b): return a
-   else: return b
+    # this is our symmetric modulou
+    a = x % n
+    b = x % (-1*n)
+    if abs(a)<abs(b): return a
+    else: return b
 
 
 ## Initialization Tools ##
@@ -24,12 +24,12 @@ def getNPQ(N):
 
 
 def genKey(P):
-   kn,kx = bitLims(P)
-   k = randint(kn,kx)
-   #print "k b4"
-   #print k
-   k = k-((k%2)-1)
-   return k
+    kn,kx = bitLims(P)
+    k = randint(kn,kx)
+    #print "k b4"
+    #print k
+    k = k-((k%2)-1)
+    return k
 
 
 def decrypt(L,p):
@@ -42,8 +42,8 @@ def makeEncrypt(N,Q):
         Qn,Qx = bitLims(Q)
         return lambda m,p: randint(Qn,Qx)*p + 2*(randint(Mn,Mx)//2) + m
 
-   F = makeEncryptBit(N,Q)
-   return (lambda L,p : [F(x,p) for x in L])
+    F = makeEncryptBit(N,Q)
+    return (lambda L,p : [F(x,p) for x in L])
 
 
 #Helper Binary Array and Integer Functions
@@ -71,16 +71,16 @@ def bor(a,b):
 
 ## Bit List Ops ##
 def myxor(L1,L2):
-   return map(lambda x: bxor(x[0],x[1]),zip(L1,L2))
+    return map(lambda x: bxor(x[0],x[1]),zip(L1,L2))
 
 
 def myand(L1,L2):
-   return map(lambda x: band(x[0],x[1]),zip(L1,L2))
+    return map(lambda x: band(x[0],x[1]),zip(L1,L2))
 
 
 def mynot(L1):
-   # This surprisingly works.
-   return map(lambda x: bnot(x),L1)
+    # This surprisingly works.
+    return map(lambda x: bnot(x),L1)
 
 
 ## Complex Operators ##
@@ -123,8 +123,8 @@ def search(L1,L2,acc,Zeros):
 ## Userland Helper Operations ##
 
 def a2b(a):
-   ai = ord(a)
-   return ''.join('01'[(ai >> x) & 1] for x in xrange(7, -1, -1))
+    ai = ord(a)
+    return ''.join('01'[(ai >> x) & 1] for x in xrange(7, -1, -1))
 
 
 def strBin(s):
