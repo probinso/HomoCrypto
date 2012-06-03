@@ -7,18 +7,23 @@ This section is for trivial circuits
 def bnot(a):
     return 1-a
 
+
 def bxor(a,b):
     return a+b
+
 
 def band(a,b):
     return a*b
 
+
 def bnand(a,b):
     return bnot(band(a,b))
+
 
 def bor(a,b):
     #bnand(bnand(a,a),bnand(b,b))
     return bnot(band(bnot(a),bnot(b)))
+
 
 """
 This section is for multiplexed operations
@@ -33,24 +38,25 @@ def mplex(G):
         if len(L) == 1: return L[0]
         A = L[:len(L)//2]
         B = L[len(L)//2:]
-        
+
         C = zip(A,B)
         out = map(tG,zip(A,B))
-        
+
         if len(A)!=len(B):
             out.append(B[-1])
             return plex(out)
     return plex
 
+
 mxor,mand,mnand,mor = [mplex(G) for G in [bxor,band,bnand,bor]]
+
 
 """
 This section is for single gate cross operations
 """
-
 def cplex(G):
     # takes in a binary operator and turns it into
-    # a cross circuit for two lists of equal size 
+    # a cross circuit for two lists of equal size
     #
     # one list may be longer, as the remainder
     # will just be dropped from the longer
@@ -60,7 +66,9 @@ def cplex(G):
         return map(tG,zip(A,B))
     return plex
 
+
 cxor,cand,cnand,cor = [cplex(G) for G in [bxor,band,bnand,bor]]
+
 
 """
 This section is for arethmatic operators
@@ -71,14 +79,14 @@ def myadd(L1,L2):
       # This is the carry logic that clark
       # provided for the adder
       return A*B+A*C+B*C
-   
+
    convert = makeFixedWidthConverter(max(len(L1),len(L2))+1)
-   # we choose the max length + 1 to satisfy carry bits, without 
+   # we choose the max length + 1 to satisfy carry bits, without
    #
-   
+
    L1 = convert(L1)
    L2 = convert(L2)
-   
+
    # apparently reverse() is an in-place
    # side-effects driven procedure
    #
@@ -89,47 +97,50 @@ def myadd(L1,L2):
    # the reverse is needed to preserve the
    # endian of this data.
    C = [0]
-   
+
    for x in Z:
       C = [carry(x[0],x[1],C[0])] + C
-   
+
    C = zip(L1,L2,C[1:])
    return map(lambda x: x[0]+x[1]+x[2],C)
+
 
 def makeFixedAddr(D):
     def carry(A,B,C):
         # This is the carry logic that clark
         # provided for the adder
         return mxor([band(A,B),band(A,C),band(B,C)])
-    
+
     toFixedWidth = makeFixedWidthConverter(D)
-    
+
     def fixedAddr(L1,L2):
-        # this is a fixed width adder for binary lists with 
-        # a signed bit head. 
+        # this is a fixed width adder for binary lists with
+        # a signed bit head.
         L1 = toFixedWidth(L1)
         L2 = toFixedWidth(L2)
-        
+
         Z = zip(L1,L2)[::-1]
         C = [0]
         for x in Z:
             C = [carry(x[0],x[1],C[0])]+C
-        
-        C = zip(L1,L2,C[1:]) # drop greatest digit 
-        
+
+        C = zip(L1,L2,C[1:]) # drop greatest digit
+
         return map(lambda (a,b,c):mxor([a,b,c]),C)
-    
+
     return fixedAddr
 
-Add16 = makeFixedAddr(16) 
+
+Add16 = makeFixedAddr(16)
+
 
 def makeMult():
     # positive integer multiplier ... couldn't get past
     # two's complement for multiply without quereying bits
     def identTop(L1,L2):
-        # this is used to minimize volume of noise 
+        # this is used to minimize volume of noise
         # in circuit. The smaller of two bit strings
-        # should be treated as the bottom half of the 
+        # should be treated as the bottom half of the
         # bit shift adder.
         Top = L1 # multiplicand
         Bot = L2 # multiplier
@@ -137,38 +148,39 @@ def makeMult():
             Top = L2
             Bot = L1
         return (Top,Bot)
-    
+
     tand = lambda (a,b) : band(a,b)
-    
+
     def Mult(L1,L2):
-        # bitwize multiplier 
-        # only works with positive numbers 
-        
+        # bitwize multiplier
+        # only works with positive numbers
+
         Top,Bot = identTop(L1,L2)    # makes circuit depth shorter
-        
+
         Pairs =[ map(tand,
                      zip(Top,[bit]*len(Top)))
                      for bit in Bot[::-1]
                      ]
-        
+
         #                   s = (T xor B) ... not used
-        #          T  o  p  
-        #       x  B  o  t  
-        #       ----------- 
+        #          T  o  p
+        #       x  B  o  t
+        #       -----------
         #         Tt ot pt  ['Pairs' denotes these entries
         #      To oo po  0    without the s padding with
         # + TB oB pB  0  0    as represented by 'signed' ]
         # -----------------
-        
+
         for i,_ in enumerate(Pairs):
             for j in range(i):
                 Pairs[i].append(0)
-                # this could be changed if we can insure 
-                # the numbers we are multiplying are all 
-                # positive. 
-        
+                # this could be changed if we can insure
+                # the numbers we are multiplying are all
+                # positive.
+
         return reduce(lambda a,b: myadd(a,b),Pairs)
     return Mult
+
 
 MULT = makeMult()
 
@@ -180,35 +192,35 @@ def makeMultB():
         if len(L1)>len(L2):
             Top,Bot = Bot,Top
         return Top,Bot
-    
-    
+
+
     def Mult(L1,L2):
-        # This might be a minimal noise multiplier, 
-        #   It may be possible to shrink noise by 
+        # This might be a minimal noise multiplier,
+        #   It may be possible to shrink noise by
         #   adding opposing ends of the bitstream
         #   but I am unsure of this.
         Top,Bot = identTop(L1,L2)
-        
+
         Val = [cand([t]*len(Bot),Bot) for t in Top][::-1]
         # the bits are reversed so that we can handle carying them better
-        
+
         tmp = []
         if len(Val)%2 == 1:
             tmp = Val[-1]
             tmp = [tuple((tmp,[0]*len(tmp)))]
         else:
             tmp = []
-            
+
         i = 0
-        
+
         f = lambda (a,b): myadd(a,b+[0]*i)
-        
+
         while len(Val) != 1:
-            i+=1 
+            i+=1
             Val = zip(Val[::2],Val[1::2]) + tmp
-            
+
             Val = map(f,Val)
-            
+
             if len(Val)%2 == 1:
                 tmp = Val[-1]
                 tmp = [tuple((tmp,[0]*len(tmp) ))]
@@ -219,19 +231,21 @@ def makeMultB():
         return Val[0]
     return Mult
 
+
 MULTB = makeMultB()
+
 
 """
 Others
 """
 def search(L1,L2,acc,Zeros):
-    
+
     if len(L2)<len(L1):
         return acc
-    
+
     List = myxor(L1,L2)
     Zeros[-1]= bnot(reduce(lambda x,y: bor(x,y),List))
     acc = myadd(acc,Zeros)[1:]
-    
+
     return search(L1,L2[8:],acc,Zeros)
 
