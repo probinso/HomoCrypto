@@ -7,6 +7,7 @@ from fractions import Fraction
 from homo import *
 from helpers import *
 
+from circuits import *
 
 debug=True
 
@@ -306,6 +307,24 @@ def go(secure,message):
     cipher = fheEncrypt(message,pk,y,N)
 
     print "encrypt  :: ", [int(i[0] %2) for i in cipher]
+    
+    stop  = [ i for i,_ in cipher]
+    stop2 = MULTB(stop,stop)
+    
+    print "atest   e:: ", [int(x%2) for x in stop2]
+
+    stop2 = [(x,multCipherHint(x,y)) for x in stop2]
+    print "atest   d:: ",map(int,fheDecrypt(stop2,S))
+    
+    """
+    stop2 = [ i for i,_ in stop2]
+    stop2 = cand(stop2,stop2)
+    
+    print "atest   e:: ", [int(x%2) for x in stop2]
+
+    stop2 = [(x,multCipherHint(x,y)) for x in stop2]
+    print "atest   d:: ", map(int,fheDecrypt(stop2,S))
+    """
 
     remess = map(int,fheDecrypt(cipher,S))
     print "decrypt  :: ", remess
