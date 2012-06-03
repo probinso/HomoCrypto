@@ -1,7 +1,10 @@
-from random import randint
-from random import random
-from random import choice
 import math
+import random
+
+from random import randint
+from random import choice
+
+from helpers import *
 
 ##Changelog Bitlims was returning bit shifts instead of powers.
 
@@ -111,7 +114,7 @@ def myadd(L1,L2):
 
 def search(L1,L2,acc,Zeros):
     if len(L2)<len(L1):
-    return acc
+        return acc
 
     List = myxor(L1,L2)
     Zeros[-1]= bnot(reduce(lambda x,y: bor(x,y),List))
@@ -176,12 +179,12 @@ def fheKeyGen(S):
     S = []
 
     for i in range(Alpha-1):
-        SparseSubset.append(random()*x)
+        SparseSubset.append(random.random()*x)
         x = x - SparseSubset[-1]
     SparseSubset.append(x)
 
     for i in range(Beta-Alpha):
-        Hint.append(random()*2)
+        Hint.append(random.random()*2)
 
     for i in SparseSubset:
         index=randint(0,len(Hint))
