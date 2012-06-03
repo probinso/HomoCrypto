@@ -31,7 +31,7 @@ def publicKeyGen(sk,N):
     pk.insert(0,maximal)
     if maximal%2==0 or mods(maximal,sk)%2!=0:
         pk=publicKeyGen(sk,N)
-        return pk
+    return pk
 
 
 def randomSubSetSum(pk):
@@ -151,13 +151,13 @@ def hintGen(f,alpha):
     SparseSubset = []
 
     for i in range(alpha-1):
-            x = F(f)
+        x = F(f)
         SparseSubset.append(x)
         f = f - x
 
     SparseSubset.append(f)
 
-        return SparseSubset
+    return SparseSubset
 
 
 def garbageGen(beta,alpha):
@@ -253,6 +253,7 @@ def encryptSk(sk,pk,y,N):
         encS[i]=1
 
     return encrypt(encS,pk,y,N)
+
 
 def fheExpandBit(c,y):
     # cy denotes exclusively the twiddled ciphertext
