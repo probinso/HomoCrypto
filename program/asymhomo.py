@@ -16,8 +16,12 @@ def privateKeyGen(P):
 
 
 def distribute(sk,N,Q):
-    q=random.randrange(0,(2**((N**5)))//sk)
-    r=random.randrange(-1*(2**N),2**N)
+    #q=random.randrange(0,(2**((N**5)))//sk)
+    """
+      do not know why dividing by sk for the code above .
+    """
+    q = randInt(N**5)
+    r = randInt(-1*N)
     return sk*q+r
 
 

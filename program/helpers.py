@@ -34,7 +34,7 @@ def bitLims(B):
 def randInt(B):
     # return int in bit range
     Min,Max = bitLims(abs(B))
-    if B < 0: Min *= -1
+    if B < 0: Min = -1*Max
     return randrange(Min,Max)
 
 
