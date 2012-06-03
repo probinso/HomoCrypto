@@ -83,8 +83,21 @@ def getAlphaBeta(N):
 	  our subset-sum solution will be length alpha
 	  
 	  I do not know how to do this. 
+	  --------------------------------------------
+	  
+	  we adopt a new definition! 
+	  
+	  \alpha = \lambda
+	                _                                           _ 
+	               | ((\lambda^2)(\lambda^5))                    | ^ 6
+          \beta\approx | ------------------------ * (log_2(\lambda)) |
+	               |      (2 * \lambda)                          |
+	               --                                          --
+	  as sited on page 15 of Fully Homomorphic Encryption
+	    Over the Integers;  June 8th 2010
+	    Dijk,Gentry,Halevi,Vaikuntanathan
 	"""
-	return (10,N**2)
+	return (N,((((N**6)+1)//2)*log(N,2))**6)
 
 #Generates key pairs and hints	
 def fheKeyGen(N):
@@ -102,6 +115,7 @@ def fheKeyGen(N):
 	y,S=hide(hint,garbage)
 	# y holds list of quotients
 	# S holds list of indexes
+	
 	
 	return ((sk,S),(pk,y))
 
@@ -261,7 +275,18 @@ def encryptSk(sk,pk,y,N):
 	
 #	for  c in cy:
 #		c[0] = c[0] - roundFrac(Fraction(sum(map(*,zip (c[0],y))),apk))
-	
+
+
+
+def fheExpandBit(c,y):
+    # cy denotes exclusively the twiddled ciphertext
+    # pk denotes the public encryption key set
+    # y denotes our subsetsum vector
+    # N is aparently for fun ... 
+    
+    return [ roundFrac(c*yi)%2 for yi in y ]
+    
+
 	
 def fheRecrypt(cy,pk,y,encS,N):
 	"""
@@ -284,10 +309,10 @@ def fheRecrypt(cy,pk,y,encS,N):
 	    
 	"""
 	
-	cout = cy[::] 
+	#cout = cy[::] 
 	
 	
-	intToBinList(i)
+	#intToBinList(i)
 	
 	
 	"""

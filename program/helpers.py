@@ -66,10 +66,8 @@ def makeFixedWidthConverter(D):
         assert(len(L) <= D)
         if len(L) == D:
             return L
-        #store = [0]*D
-        #store[0] = L[0]
-        store = [L[0]]*D
-        #store[(-1*len(L)) + 1:] = L[1:][::]
+        store = [0]*D    # this does not preserve sign
+        #store = [L[0]]*D # this preserves sign
         store[-1*len(L):] = L[::]
         return store
     return toFixedWidth
