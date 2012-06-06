@@ -349,12 +349,12 @@ def go(secure,message):
     print "encrypt  :: ", [int(i[0] %2) for i in cipher]
     
     stop  = [ i for i,_ in cipher]
-    stop2 = MULTB(stop,stop)
+    stop2 = myadd(stop,stop)
     
     print "atest   e:: ", [int(x%2) for x in stop2]
 
-    stop2 = [(x,multCipherHint(x,y)) for x in stop2]
-    print "atest   d:: ",map(int,fheDecrypt(stop2,S))
+    #stop2 = [(x,multCipherHint(x,y)) for x in stop2]
+    print "atest   d:: ",map(lambda x: int(mods(x,sk)%2),stop2)
     
     """
     stop2 = [ i for i,_ in stop2]
