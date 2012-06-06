@@ -63,14 +63,11 @@ def bnot(a):
 def band(a,b):
     return a*b
 
-
 def bnand(a,b):
     return bnot(band(a,b))
 
-
 def bor(a,b):
     return bnand(bnand(a,a),bnand(b,b))
-
 
 ## Bit List Ops ##
 def myxor(L1,L2):
