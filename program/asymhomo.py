@@ -1,7 +1,7 @@
 import random
 
-from math import log
-from math import ceil
+from itertools import izip
+from math import ceil,log
 from fractions import Fraction
 
 from homo import *
@@ -292,6 +292,30 @@ def doubleDecrypt(cy,encS):
         y=i[1]
         message.append(abs( mods((mods(c,2) + mods(dotProduct(y,encS),2)),2)))
     return message
+
+def expand(c,y):
+    return [intToBinList(
+            roundFrac(c*yi)
+            ) for yi in y]
+
+def recrypt(c,y,encS):
+    store = expand(c,y)
+    
+    
+
+
+
+def testPkRecrypt(secure,message):
+    N,P,Q = getNPQ(secure)
+    (sk,S),(pk,y) = fheKeyGen(N)
+    
+    cipher  = fheEncrypt(message,pk,y,N)
+    cipher  = [ i[0] for i in cipher ]
+    
+    cipher2 = fheEncrypt(message,pk,y,N)
+    cipher2 = [ i[0] for i in cipher2 ]
+    
+    c = pk.encrypt_pk
 
 
 def go(secure,message):

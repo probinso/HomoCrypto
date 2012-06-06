@@ -1,5 +1,5 @@
 from fractions import Fraction
-from math import ceil,log
+from math import ceil,log,copysign
 from random import randrange
 
 
@@ -15,10 +15,8 @@ def binListToInt(l):
 
 def roundFrac(f):
     # rounds fraction to nearest integer
-    y = int(f)
-    if f - y >= Fraction(1,2): y +=1 
-    return y
-
+    half = copysign(0.5,f)
+    return int(f + half)
 
 def dotProduct(L1,L2):
     # returns dot product of two vectors
@@ -44,7 +42,6 @@ def mods(x,n):
    b = x % (-1*n)
    if abs(a)<abs(b): return a
    else: return b
-
 
 def parityList(L):
     return map(lambda x : int(x%2), L)
