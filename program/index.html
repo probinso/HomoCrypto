@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Fully Homomorphic Encryption</title>
+    <style type="text/css">
+      html, body, ul, ol, li, p, 
+      h1, h2, h3, h4, h5, h6, 
+      form, fieldset, a, header, div{ 
+      margin: 0; 
+      padding: 0; 
+      border: 0; 
+      }
+      
+      html, body { border-width: 0px; margin: 0px; width: 100%; height: 100%; }
+      
+      /*mozilla rainbow gradient*/
+      
+
+      html {
+      /* background-image: -moz-linear-gradient(to bottom, red, orange, yellow, green, blue, indigo, violet, indigo, blue, green, yellow, orange, red);*/
+      background-image: -moz-repeating-linear-gradient(to bottom, red, orange, yellow, green, blue, indigo, violet, indigo, blue, green, yellow, orange,red);
+      background-repeat: repeat;
+     /* overflow:hidden; */
+      }
+
+      body {
+      
+
+      }
+
+      #container
+      {
+      width:80%;
+      margin-left:auto;
+      margin-right:auto;
+      min-height: 80%;
+      }
+      
+      #container h1 {
+      padding-top: 60px;
+      }
+
+      form {
+      margin-bottom: 30px;
+      }
+
+      label {
+      text-align:justified;
+      display: inline-block;
+      }
+
+      #encrypt {
+      background: url('http://sw.cs.wwu.edu/~cacij/op.png') repeat top left;
+      }
+
+      #encrypt p {
+      word-wrap:break-word;    
+      }
+
+      p.utri {
+      text-align:center;
+      font-size:200%;
+      font-weight:bold;
+      }
+
+      p.sub {
+      text-align: center;
+      font-size:125%;
+      font-weight: bold;
+      padding-bottom: 10px;
+      }
+      
+      #footer {
+      padding-top: 50px;
+      }
+
+      embed {
+      /*display: none;*/
+      position:absolute;
+      top:0px;
+      }
+
+      canvas{background-color:#000000;overflow:hidden;display:none;}
+    </style>
+
+    <script type="text/javascript">
+      function hyperspace() {
+      var css = new Array();
+      if(document.styleSheets[0].cssRules) {
+      css = document.styleSheets[0].cssRules;
+      } else if (document.styleSheets[0].rules) {
+      css = document.styleSheets[0].rules;
+      }
+      css[14].style.display = "inline";
+      start();
+      context.fillStyle='rgba(0,0,0,'+opacity+')';
+      }
+
+    </script>
+
+    <script type="text/javascript" src="http://sw.cs.wwu.edu/~cacij/stars.js"></script>
+  </head>
+  <body>
+    <canvas id="starfield" style="background-color:#000000"></canvas>
+    <div id="container">
+      <div id="header">
+	<h1>Fully Homomorphic Encryption</h1>
+      </div>
+      <div id="main">
+	<form action="{% if not s %}/encrypt/{% endif %}" method="post">{% csrf_token %}
+	  <label for="search">Enter a string to search for: <br />(Max 8 characters)</label>
+	  <input type="text" name="search" maxlength="8"/>
+	  <input type="submit" value="LUDACRIS SPEED CAPTAIN!!!" onclick="hyperspace()"/>
+	</form>
+
+	{% if s %}
+	<div id="encrypt">
+	  <p class="utri">THIS IS YOUR SEARCH STRING ENCRYPTED!!!</p>
+	  <p class="sub">(Bits are delimited by &#8711;)</p>
+	  {% for i in s %}
+	  <p style="text-align:center;">{{ i }}</p>
+	  <p class="utri">&#8711;</p>
+	  {% endfor %}
+	</div>
+	{% endif %}
+      </div>
+      <div id="footer">
+	<!-- <iframe src="http://docs.google.com/viewer?url=http%3A%2F%2Fsw.cs.wwu.edu%2F~cacij%2Fhomo.pdf&embedded=true" width="900" height="780" style="border: none;"></iframe>
+	<embed src="http://sw.cs.wwu.edu/~robinsp3/mus.mp4" /> -->
+      </div>
+    </div>
+  </body>
+</html>
