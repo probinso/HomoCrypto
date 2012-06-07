@@ -12,8 +12,10 @@ def main():
 			line = map(int,i[:-1])		
 			count = search(wordbin,line,[0]) 
 			break
-		except:
-			continue
-	print count
+		except ValueError:
+			x=open("/hdfs/tmp/error.txt","a")
+			x.write("value error on input:"+i)
+			x.close()
+	print str(count)
 
 main()
