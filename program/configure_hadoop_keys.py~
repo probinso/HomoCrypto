@@ -1,5 +1,0 @@
-
-
-import asymhomo
-
-sk,pk=asymhomo.fheKeyGen(8)
