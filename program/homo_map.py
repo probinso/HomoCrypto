@@ -7,10 +7,9 @@ def main():
 
 	word="god"
 	wordbin = intListToBinList(word)
-	start=True
 	for i in sys.stdin:
 		line = map(int,i[:-1])		
-		count += binListToInt(parityList(search(wordbin,intListToBinList("god god god hi hi"),[0],[0])))
+		count = search(wordbin,line,[0]) 
 	print count
 
 main()

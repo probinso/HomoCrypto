@@ -76,7 +76,6 @@ def makeFixedWidthConverter(D):
     def toFixedWidth(L):
         # we assume that the input comes in with 
         # a leading bit denoting the sign
-        assert(len(L) <= D)
         if len(L) == D:
             return L
         store = [0]*D    # this does not preserve sign
