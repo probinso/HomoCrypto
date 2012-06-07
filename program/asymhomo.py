@@ -51,7 +51,7 @@ def asymKeyGen(N):
 
 
 #message is an array pk is a public key array
-def encrypt(message,pk,y,N):
+def encrypt(message,pk,N):
     """
     The code above is not secure. It is likely that randomSubSetSum(pk)
     will introduce a constant of too much noise and because these values
@@ -213,7 +213,7 @@ def fheEncrypt(message,pk,y,N):
     N  = security parameter
     """
 
-    c = encrypt(message,pk,y,N)
+    c = encrypt(message,pk,N)
     cipher = [(x,multCipherHint(x,y)) for x in c]
 
     return cipher
