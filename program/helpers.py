@@ -57,11 +57,14 @@ def intListToBinList(i):
     return reduce(lambda a,b: a+b,newlist)
     #return newlist
 
+def split(input,size):
+    # splits list into a list of lists each length size
+    return [input[start:start+size] for start in range(0,len(input),size)]
 
 def wordBinListToString(l):
     #takes a list of binary representations of letters and returns a string
     word =""
-    for letter in l:
+    for letter in split(l,8):
         word += chr(binListToInt(letter))
     return word
 
