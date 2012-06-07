@@ -300,9 +300,10 @@ def expand(c,y):
     tmp = [roundFrac(c*yi) for yi in y] 
     
     fixedWidth = makeFixedWidthConverter(len(bin(max(tmp))))
-    return map(lambda x: fixedWidth(binToIntList(x))[::-1],tmp)
+    return map(lambda x: fixedWidth(intToBinList(x))[::-1],tmp)
 
-def recrypt(c,y,encS,alpha,beta):
+def recrypt(c,y,encS,N):
+    alpha, beta = getAlphaBeta(N)
     BlockSize = beta // alpha
     
     expC = expand(c,y)
@@ -310,17 +311,19 @@ def recrypt(c,y,encS,alpha,beta):
     assert(len(encS) == len(expC))
     # there is no reason that these should not be equivelent in length
     
-    li = [map(lambda a: ski*a,cei) for ski,cei in izip(encS,expC)]
+    li = [map(lambda a: ski*a,cei) for ski,cei in zip(encS,expC)]
     
+    """
     ly = [sum(islice(li,BlockSize))          # 
           for i in range(alpha)]             # 
     
+    """
+    ly = split(li,BlockSize)
     
-    binAdd = makeFixedWidthAdder(max(map(len,ly)))
-    reduce(binAdd,ly)
     
-    pass
-
+    res = addReduce(ly)
+    return res[2]+res[1] + c & 1
+    
 
 def testPkRecrypt(secure,message):
     N,P,Q = getNPQ(secure)
@@ -346,17 +349,21 @@ def go(secure,message):
 
     print "-----------------------------"
 
-    cipher = fheEncrypt(message,pk,y,N)
+    cipher = encrypt(message,pk,N) #fheEncrypt(message,pk,y,N)
 
-    print "encrypt  :: ", [int(i[0] %2) for i in cipher]
+    print "encrypt  :: ", [int(i %2) for i in cipher]
+    encS = encrypt(S,pk,N)
     
-    stop  = [ i for i,_ in cipher]
-    stop2 = cxor(stop,stop)
     
-    print "atest   e:: ", [int(x%2) for x in stop2]
+    #def recrypt(c,y,encS,alpha,beta):
+    cipher2 = map(lambda x: recrypt(x,y,encS,N),cipher)
+    print " d1       :: ", map(int,fheDecrypt(cipher,S))
+    print " d2       :: ", map(int,fheDecrypt(cipher2,S))
+    
+    #print "atest   e:: ", [int(x%2) for x in stop2]
 
     #stop2 = [(x,multCipherHint(x,y)) for x in stop2]
-    print "atest   d:: ",map(lambda x: int(mods(x,sk)%2),stop2)
+    #print "atest   d:: ",map(lambda x: int(mods(x,sk)%2),stop2)
     
     """
     stop2 = [ i for i,_ in stop2]
@@ -368,6 +375,6 @@ def go(secure,message):
     print "atest   d:: ", map(int,fheDecrypt(stop2,S))
     """
 
-    remess = map(int,fheDecrypt(cipher,S))
-    print "decrypt  :: ", remess
+    #remess = map(int,fheDecrypt(cipher,S))
+    #print "decrypt  :: ", remess
 

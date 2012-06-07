@@ -15,7 +15,7 @@ def binListToInt(l):
 
 def roundFrac(f):
     # rounds fraction to nearest integer
-    half = copysign(0.5,f)
+    half = sign(int(f))*Fraction(1,2)
     return int(f + half)
 
 def dotProduct(L1,L2):
@@ -23,6 +23,8 @@ def dotProduct(L1,L2):
     assert(len(L1)==len(L2))
     return sum(map(lambda x: x[0]*x[1],zip(L1,L2)))
 
+def sign(x):
+    return cmp(x,0)
 
 def bitLims(B):
     # returns the bit limits for a number of bits

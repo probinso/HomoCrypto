@@ -71,7 +71,6 @@ def cplex(G):
 
 cxor,cand,cnand,cor = [cplex(G) for G in [bxor,band,bnand,bor]]
 
-
 """
 This section is for arethmatic operators
 """
@@ -134,6 +133,7 @@ def makeFixedAddr(D):
 
 
 Add16 = makeFixedAddr(16)
+addReduce = mplex(Add16) # if this works i'll be so yoked !
 
 
 def makeMult():
