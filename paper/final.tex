@@ -1,0 +1,153 @@
+\documentclass[letterpaper,11pt]{article} % letterpaper is american!
+\usepackage{enumerate}
+\usepackage{amsfonts}
+\usepackage{graphicx}
+\pagestyle{empty} \setlength{\parindent}{0mm}
+%\addtolength{\topmargin}{-0.5in} \setlength{\textheight}{9in}
+%\addtolength{\textwidth}{1.75in} \addtolength{\oddsidemargin}{-0.9in}
+\usepackage[margin=1in]{geometry}
+
+\title{Homomorphic Encryption Systems}
+\date{\today}
+\author{
+Phil Robinson, Jeremy Caci, Ali Hajy,\\
+Jonah Jolley, Clark Rinker\\
+Advisor : Dr. David Bover}
+
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+\hspace{1em}We present a formal inquiry of the first fully homomorphic encryption scheme proposed by Craig Gentry in 2008. Moreover we introduce the first implementation of this cipher in the Python programming language. A fully homomorphic encryption scheme enables the execution of arbitrary operations on encrypted data without the decryption key which, put simply, allows for a third party to  store and manipulate sensitive information without the ability to interpret it.\\ 
+
+\hspace{1em}Our investigation includes a high level synopsis of the mathematics involved in fully homomorphic encryption, a complete demonstration of our implementation in Python, and finally a overview of the space and asymptotic time complexities of the proposed system. 
+\end{abstract}
+
+
+\section*{Introduction}
+% ------ Philip --------
+% We should place dates on articles that we reference.  
+% We do not mention symmetric-mod in this paper, however
+% we use it in some of the equasions. We should probably
+% have a section for our functional notation as other   
+% papers have. Also a bibliography.                     
+% ---- End Philip ------
+
+	Homomorphic Encryption is a class of encryption schemes that allow arbitrary operations on encrypted data. To be more formal, if $E(x),D(x),f(x)$ are an encryption, decryption, and arbitrary function respectively, then $D(E(f(x)))=D(f(E(x)))$. While this claim seems simple it lends itself to the possibility of changing the way computers communicate in the client server model. The applications of an efficient fully homomorphic encryption system are potentially limitless. A contemporary example is cloud based email, where a decentralized server stores and serves encrypted user email. Furthermore, such a system would allow for users to request the server to perform search queries on stored data without loss of privacy. This is a particularly enticing scenario given the recent boom in portable devices and multi party computation, both of which currently have serious security concerns. \\
+
+	Until recently, Homomorphic Encryption schemes were nothing more that mathematical pipe dreams. However recently Gentry published a description for the first fully homomorphic encryption scheme. Since the now classic thesis there have been scores of papers published on the subject, each providing a variation on the same scheme. Gentry defined a system that permitted somewhat homomorphic operations over bits, each operation increasing a noise parameter associated with the ciphertext. When the noise became too large the data could not be reliably decrypted. The description then goes on to show how one can reduce the noise of a given ciphertext applying the decryption circuit to the cipher homomorphically; that is by encrypting the secret key with the public in the scheme. The result is a scheme that can perform arbitrary operations on encrypted data.\\
+
+	Gentry's scheme, and the myriad of schemes that followed all suffer from the same flaw: degrading performance as one attempts to increase the security parameter of the scheme (increasing the time it would take to brute force the private key.) In fact to provide any reasonable semblance of security comparable to traditional encryption schemes the resulting encrypted data becomes intractably large. Thus the complexity of Gentry's scheme is not bound by time complexity but by space complexity. While a number of papers have attempted to decrease the size of the encrypted data as of the point of our research none have yet proposed a system that is tractable in real world situations.\\
+
+	Rather than attempt to provide a reduction in key and ciphertext size we provide a pure Python implementation of a variant of Gentry's original scheme that uses integers instead of lattices. Additionally we apply the Map/Reduce principle to the problem, showing how ciphertexts can be distributed across multiple machines in order increase the feasible workload that the system can handle. Finally we simulate the canonical example of homomorphic encryption above by providing a web interface where a user can submit an encrypted query to a homomorphic word count. The remainder of our paper is as follows\\
+
+	We first provide a high level description of Fully Homomorphic Encryption over the integers, including a process to generate asymmetric keys, encrypted and decrypt, evaluate homomorphic operations, and refresh the noise of a given ciphertext. We leave the proof of the given system to the original authors. We Secondly provide a description of our codebase, including our encryption library and basic evaluation functions, our webserver, and our cluster. Finally we provide our results and reiterate the complications with the given scheme.
+
+
+
+\section*{Components}
+% ------ Philip --------
+% We never discuss the mathematics behind circuit ops 
+% Theses are relatively simple and give us clear intent.
+% Also we have the information already on the poster, so
+% no additional work. 
+% 
+% Also we should talk about what some of these variables 
+% mean for human readability. like alpha/beta s relation
+% to the usbset sum problem, and what a nist equivelent 
+% security parameter would be. We can pull more from the 
+% poster, as this and the poster are to be seperate.
+%
+% We may want to use listings to actually place our code
+% into each of these sections that are relivent. 
+% ---- End Philip ------
+
+\begin{center}
+\begin{tabular}{  l | l | l | l | l | l }
+\hline
+Parameter & N & P & Q & $\alpha$ & $\beta$ \\ \hline
+Size &  $\lambda$ & $\lambda ^2$  & $\lambda ^5$ & $\lambda$ & $\lambda ^5$  \\ \hline
+\end{tabular}
+\end{center}
+
+\subsection*{Keygen}
+The keygen function generates a random $P$ bit odd integer to be the secret key $sk$. $sk$ is used by the distribution function to generate $Q + N$ integers to make up the public key. The public key integers are chosen from
+the formula $sk * q + r$, where $q$ is a $Q$ bit integer and $r$ is an integer between $(-2^N, 2^N).$ Reorder the public key integers such that the first element $x_0$ is the largest. Restart they keygen process if $X_0$ is even or if $[x_0] Mod sk$ is odd  \\
+
+Generate a set of $\alpha$ rationals $H$, which sum up to $\frac{1}{sk}$. Generate a Vector of $\beta - \alpha$, rationals $Y.$ Randomly place the elements of $H$ into $Y$. Finally create a vector S over $0,1$ such that the element $s_i$ is one if and only if the element $Y_i$ is an element of the original set $H$.\\
+
+Output The secret key $S$ and the public key $pk,Y$\\
+
+\subsection*{Encrypt}
+Given the Public Key pk,y and the message bit M, Generate a random subset sum $S$ of the public Keys. Generate a noise parameter r as a random integer in $(-2^p,2^p)$. Let the cipher integer $c=[m+2r+2S]_{x_0}$ generate the cipher hint vector $cy$ such that $cy_i=cY_i$
+Where Y is the hint Vector. Output the pair $(y,cy)$\\
+% ------ Philip --------
+% we should write explicitly why we are using this method. 
+% It is also only used for recrypt decryption which is an 
+% assumption that we had not respected eirlier. 
+% ---- End Philip ------
+
+\subsection*{Decrypt}
+	Given a ciphertext $(c,cy)$ and a Secret key vector S, output $[c-\lfloor \sum\limits_{i=1}^\beta (cy_is_i) \rceil ]_2$\\
+\subsection*{Evaluate}
+Given two cipher texts, $C_1, C_2$ and a boolean circuit $F$. Apply the circuit to the cipher text as if they were binary digits. Using Multiplication and Addition as if they were AND, and XOR respectively. 
+\subsection*{Recrypt}
+Given a cipher text $C$, encrypt the secret key $S$. Apply the decryption circuit to the ciphertext and the encrypted secret key.
+\\
+\section*{Implementation}
+% ------ Philip --------
+% We never define the acronym DGHV. We should also grant 
+% some attention to the author of the integer model. It 
+% may also be nice to brag about our clear, tracable, 
+% implementation. Additionally, our webservice will only 
+% support search.
+% ---- End Philip ------
+\subsection*{Python}
+The Python implementation of the code exists in two parts, a client (a webserver) and the server (the cluster.) The Client is able to generate public private key pairs, encrypt search queries, and post the request to the cluster. The webserver is implemented in Django, a Python based website framework. The result allows quick access to the Encryption library.\\
+
+The cluster is able to perform arbitrary operations on encrypted data using a library of Python that simulates logic gates underneath. Our goes on to implement full adders and multipliers, registers, and basic gate operations. The resulting library allows a user to implement their homomorphic functions using only binary operations.\\
+
+Our Python implementation uses trivial parameters for the encryption scheme above. Our chosen security parameter $\lambda=8$ leading to private keys that are 64 bits long and public key integers that are 32KB. While this implementation does not offer feasible security it accurately simulates an implementation of the DGHV scheme.
+
+
+\subsection*{Hadoop}
+
+% ------ Philip --------
+% We should list in this section explicitly what we use  
+% for map and reduce. This clear identification will    
+% make it easier for others to replecate our work. We   
+% should also provide information about the systems that 
+% we are mapping information over (ie. hardware, network 
+% architecture).                                        
+% ---- End Philip ------
+
+ We addressed the time and space limitations of this encryption system by utilizing a distributed file system tool called Hadoop and a cluster of powerful computers available to us in Western's Computer Science Department. Hadoop is derived from Google's MapReduce. In our system the Map, attempts to sum up all the occurrences of a word in a word search. The reduce, sums up all the counts each of those maps returned.\\
+
+The Hadoop cluster waits on input from our Django server using NetCat. When the encrypted search query is received it starts the cluster and waits until the batch is completed. It then Netcats the result of the query back to the server, who can then decrypt the result for the user.
+
+While a word search is the canonical Hadoop map reduce example, two issues arise when attempting to implement the system. Firstly the system must perform a word search over encrypted binary information. In order to limit the amount of work required per comparison, the search query is first XORed with it's comparison test. If the result produces all zeros, there was a successful string match. However as the bits are encrypted, the server has no way of telling if there was a successful match. It therefore uses a torunament tree over the result of the XOR using OR operations. If there were any non zero elements, the result of the tournament will be one, specifying a mismatch. Therefore the last output can be put through a not gate, and the result can be added to the map's total count.
+\section*{Conclusion}
+
+Even with the resources available to us, the overhead of this encryption scheme make a contemporary model impractical. The space required to encrypt and store a data set with a sufficient security parameter is unreasonable. However, the concept of a fully homomorphic encryption scheme is still in its infancy, and since Craig Gentry's initial dissertation multiple papers have been published containing new and exciting optimizations to the original algorithm. This combined with the rate at which modern hardware is advancing might make the idea of a functional fully homomorphic system possible in the future. \\ \\ \\
+% ------ Philip --------
+% We need to reserve space to talk about statistics. of 
+% our system. We can also compare these results to the  
+% existing systems, and talk about how many of them use 
+% cross language facilities for speedup that we do not,  
+% mostly for the purposes of clarity.
+% ---- End Philip ------
+
+\section*{In the future}
+\hspace{1em}The purposed system is effective but not efficient. In order to achieve enough speed up and make the system realistic we propose to parallelize server side operations across the Hadoop distributed computing system.
+\parskip 1em
+
+\hspace{1em}Currently our proposed system uses elementary school style long multiplication, an operation that is \(N^2\) for the number of digits in the operands. Even with Karatusba's algorithm \(\theta( n \lg n)\) implemented in python the system does not achieve a sufficient speed up. We plan to implement the multiplications on the video cards of our lab using PyCuda and Fast DFT. This parallelization would achieve a speed not normally usable in python.
+
+
+\hspace{1em}Finally in order to shrink space complexity we plan to explore using n-ary systems rather than a base-2 implementation. This research would require a more formal address of our co-sets and ideals.
+
+
+
+
+\end{document}

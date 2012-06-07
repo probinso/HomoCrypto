@@ -1,6 +1,6 @@
 import random
 
-from itertools import izip
+from itertools import izip,islice
 from math import ceil,log
 from fractions import Fraction
 
@@ -96,7 +96,7 @@ def getAlphaBeta(N):
       \alpha = \lambda
                     _                                           _
                    | ((\lambda^2)(\lambda^5))                    | ^ 6
-          \beta\approx | ------------------------ * (log_2(\lambda)) |
+      \beta\approx | ------------------------ * (log_2(\lambda)) |
                    |      (2 * \lambda)                          |
                    --                                          --
       as sited on page 15 of Fully Homomorphic Encryption
@@ -294,15 +294,30 @@ def doubleDecrypt(cy,encS):
     return message
 
 def expand(c,y):
+    # multiplies the cipher text by the entire y vector 
+    # Then we round the resultant vector entries to the nearest 
+    # integer. Finally its resultant is made into a binlist 
     return [intToBinList(
             roundFrac(c*yi)
             ) for yi in y]
 
-def recrypt(c,y,encS):
-    store = expand(c,y)
+def recrypt(c,y,encS,alpha,beta):
+    expC = expand(c,y)
     
+    BlockSize = beta // alpha
     
-
+    assert(len(encS) == len(expC))
+    # there is no reason that these should not be equivelent in length
+    
+    li = [map(lambda a: ski*a,cei) for ski,cei in zip(encS,expC)]
+    
+    ly = [sum(islice(li,BlockSize))          # 
+          for i in range(alpha)]             # 
+    
+    binAdd = makeFixedWidthAdder(max(map(len,ly)))
+    reduce(binAdd,ly)
+    
+    pass
 
 
 def testPkRecrypt(secure,message):
@@ -315,7 +330,8 @@ def testPkRecrypt(secure,message):
     cipher2 = fheEncrypt(message,pk,y,N)
     cipher2 = [ i[0] for i in cipher2 ]
     
-    c = pk.encrypt_pk
+    #c = pk.encrypt_pk
+    pass
 
 
 def go(secure,message):
@@ -333,12 +349,12 @@ def go(secure,message):
     print "encrypt  :: ", [int(i[0] %2) for i in cipher]
     
     stop  = [ i for i,_ in cipher]
-    stop2 = MULTB(stop,stop)
+    stop2 = myadd(stop,stop)
     
     print "atest   e:: ", [int(x%2) for x in stop2]
 
-    stop2 = [(x,multCipherHint(x,y)) for x in stop2]
-    print "atest   d:: ",map(int,fheDecrypt(stop2,S))
+    #stop2 = [(x,multCipherHint(x,y)) for x in stop2]
+    print "atest   d:: ",map(lambda x: int(mods(x,sk)%2),stop2)
     
     """
     stop2 = [ i for i,_ in stop2]
