@@ -240,17 +240,13 @@ MULTB = makeMultB()
 Others
 """
 def search(L1,L2,acc,Zeros):
-"""
-returns list representative of binary value
-for testing -->
-                search(intListToBinList("cat"), intListToBinList("cat dog cat"), [0],[0])
-"""
-    if len(L2)<len(L1):
-        return acc
+	if len(L2)<len(L1):
+		return [0]+acc
 
-    List = myxor(L1,L2)
-    Zeros[-1]= bnot(reduce(lambda x,y: bor(x,y),List))
-    acc = myadd(acc,Zeros)[1:]
-
-    return search(L1,L2[8:],acc,Zeros)
+	List = cxor(L1,L2)
+	List = mor(List)
+	List = bnot(List)
+	Zeros[-1] = List
+	acc = myadd(acc,Zeros)[1:]
+	return search(L1,L2[8:],acc,Zeros)
 
