@@ -239,7 +239,11 @@ MULTB = makeMultB()
 Others
 """
 def search(L1,L2,acc,Zeros):
-
+"""
+returns list representative of binary value
+for testing -->
+                search(intListToBinList("cat"), intListToBinList("cat dog cat"), [0],[0])
+"""
     if len(L2)<len(L1):
         return acc
 
