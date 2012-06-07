@@ -44,7 +44,9 @@ def mplex(G):
 
         if len(A)!=len(B):
             out.append(B[-1])
-            return plex(out)
+            
+        return plex(out)
+
     return plex
 
 
@@ -234,19 +236,16 @@ def makeMultB():
 
 MULTB = makeMultB()
 
-
-
 """
 Others
 """
-def search(L1,L2,acc,Zeros):
-	if len(L2)<len(L1):
-		return [0]+acc
+def search(L1,L2,acc):
+    if len(L2)<len(L1):
+        return acc
 
-	List = cxor(L1,L2)
-	List = mor(List)
-	List = bnot(List)
-	Zeros[-1] = List
-	acc = myadd(acc,Zeros)[1:]
-	return search(L1,L2[8:],acc,Zeros)
+    List = [0,0]
+    List[-1] = bnot(mor(cxor(L1,L2)))
+    acc = myadd(acc,Zeros)[1:]
+
+    return search(L1,L2[8:],acc)
 
