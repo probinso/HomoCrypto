@@ -245,7 +245,7 @@ def search(L1,L2,acc):
 
     List = [0,0]
     List[-1] = bnot(mor(cxor(L1,L2)))
-    acc = myadd(acc,Zeros)[1:]
+    acc = myadd(acc,List)[1:]
 
     return search(L1,L2[8:],acc)
 
