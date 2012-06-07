@@ -3,6 +3,7 @@
 #A simple script that can read and write generated Gentry keys
 import asymhomo
 from fractions import Fraction
+from helpers import *
 def makeAndWriteHadoopKeys():
     sk,pk=asymhomo.fheKeyGen(8)
     sk_file=file("gentry_sk.txt","w")
@@ -34,6 +35,18 @@ def makeAndWriteHadoopKeys():
     pk_file.close()
     y_file.close()
 
+
+def makebible():
+	with open("input_data/jesus_fucking_christ.txt") as content_file:
+	    content = content_file.read()
+
+	content = intListToBinList(content)
+	biblebit = file("/tmp/biblebit.txt","w")
+
+	for x in content:
+		biblebit.write(str(x))
+	biblebit.close()
+	
 
 
 
