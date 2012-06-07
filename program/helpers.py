@@ -51,9 +51,11 @@ def intListToBinList(i):
     #takes a string and returns a list of binary representation of each letter
     newlist =[]
     word = list(i)
+    fixed = makeFixedWidthConverter(8)
     for letter in word:
-        newlist.append(intToBinList(ord(letter)))
-    return newlist
+        newlist.append(fixed(intToBinList(ord(letter))))
+    return reduce(lambda a,b: a+b,newlist)
+    #return newlist
 
 
 def wordBinListToString(l):
