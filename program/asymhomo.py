@@ -172,7 +172,15 @@ def garbageGen(beta,alpha):
 
     garbage=[]
     for i in xrange(beta-alpha):
-        garbage.append(Fraction(round(random.random()*2,int(ceil((log(alpha,2)+3))))))
+        garbage.append(
+            Fraction(
+                round(
+                    random.random()*2,
+                    int(ceil(log(alpha,2)+3))
+                    )
+                )
+            )
+        
 
     return garbage
 
@@ -199,7 +207,7 @@ def hide(hint,garbage):
         garbage.insert(index,h)
 
     S = [garbage.index(h) for h in hint]
-
+    
     return (garbage,S)
 
 
@@ -243,7 +251,7 @@ def hintsum(y,S):
     return val
 
 
-def encryptSk(sk,pk,y,N):
+def encryptSk(sk,pk,N):
     """
     Used to Ecnrypt the Secret Key List with a new public Key
     """
@@ -251,11 +259,13 @@ def encryptSk(sk,pk,y,N):
     #the Sk list is a bunch of indecies. In order to do a recrypt it would need to be
     #A Vector of 1's and zeros as Gentry Described. This function uses the public key to encrypt the secret key
     #and returns encS. Client would need to make this and send it to the server
-    encS=[0]*len(y)
+    _, beta = getAlphaBeta(N)
+    encS=[0]*(beta)
 
     for i in sk:
         encS[i]=1
 
+    print "ready to encrypt S"
     return encrypt(encS,pk,N)
 
 
@@ -307,26 +317,45 @@ def recrypt(c,y,encS,N):
     BlockSize = beta // alpha
     
     expC = expand(c,y)
-    
-    print len(encS),len(expC)
+    #print expC[0],
+    #exit()
+    print "*",
+    print len(encS),len(expC),len(y),(alpha+beta)
     assert(len(encS) == len(expC))
     # there is no reason that these should not be equivelent in length
     
-    li = [map(lambda a: ski*a,cei) for ski,cei in zip(encS,expC)]
+    li = reduce(lambda a,b:a+b,
+                [map(lambda a: ski*a,cei) 
+                 for ski,cei in zip(encS,expC)
+                 ]
+                )
     
+    
+    print "*",
+
+    ly = split(li,BlockSize)
+    # this is essentially used to change the dimmentions of our matrix
+    # so that the y_i values are lined up 
+    del li
+   
     """
     ly = [sum(islice(li,BlockSize))          # 
           for i in range(alpha)]             # 
-    
     """
-    ly = split(li,BlockSize)
     
     
+    
+    print "*",
+    #exit()
     res = addReduce(ly)
-    return res[2]+res[1] + c & 1
+    del ly
+    print "*",
+    print
+    return res[1]+res[0] + c & 1
     
 
 def testPkRecrypt(secure,message):
+    
     N,P,Q = getNPQ(secure)
     (sk,S),(pk,y) = fheKeyGen(N)
     
@@ -352,18 +381,21 @@ def go(secure,message):
 
     cipher = encrypt(message,pk,N) #fheEncrypt(message,pk,y,N)
 
-    print "encrypt  :: ", [int(i %2) for i in cipher]
+    print "encrypt  :: ", [ int(i % 2) for i in cipher ]
     #print S
     #exit()
     #def encryptSk(sk,pk,y,N):
-    encS = encryptSk(S,pk,y,N)
-    
+    encS = encryptSk(S,pk,N)
+    print "*",
     
     
     #def recrypt(c,y,encS,alpha,beta):
     cipher2 = map(lambda x: recrypt(x,y,encS,N),cipher)
-    print " d1       :: ", map(int,fheDecrypt(cipher,S))
-    print " d2       :: ", map(int,fheDecrypt(cipher2,S))
+
+    print "rencrypt :: ", [ int(i % 2) for i in cipher2 ]
+
+    print " d1      :: ", map(int,fheDecrypt(cipher,S))
+    print " d2      :: ", map(int,fheDecrypt(cipher2,S))
     
     #print "atest   e:: ", [int(x%2) for x in stop2]
 
