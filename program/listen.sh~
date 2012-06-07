@@ -1,0 +1,7 @@
+
+
+while true
+do
+netcat -l 6112 > query.txt
+echo "Done"
+done
