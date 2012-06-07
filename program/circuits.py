@@ -82,7 +82,7 @@ def myadd(L1,L2):
       # provided for the adder
       return A*B+A*C+B*C
 
-   convert = makeFixedWidthConverter(max(len(L1),len(L2))+1)
+   convert = makeFixedWidthConverter(max(len(L1),len(L2)))
    # we choose the max length + 1 to satisfy carry bits, without
    #
 
@@ -245,7 +245,7 @@ def search(L1,L2,acc):
 
     List = [0,0]
     List[-1] = bnot(mor(cxor(L1,L2)))
-    acc = myadd(acc,List)[1:]
+    acc = myadd(acc,List)
 
     return search(L1,L2[8:],acc)
 
