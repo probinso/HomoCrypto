@@ -5,11 +5,15 @@ import sys
 def main():
 	count=0
 
-	word="God"
+	word="god"
 	wordbin = intListToBinList(word)
 	for i in sys.stdin:
-		line = map(int,i[:-1])		
-		count = search(wordbin,line,[0]) 
+		try:
+			line = map(int,i[:-1])		
+			count = search(wordbin,line,[0]) 
+			break
+		except:
+			continue
 	print count
 
 main()
