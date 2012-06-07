@@ -5,7 +5,7 @@ import sys
 def main():
 	count=0
 
-	word="god"
+	word="God"
 	wordbin = intListToBinList(word)
 	for i in sys.stdin:
 		line = map(int,i[:-1])		
