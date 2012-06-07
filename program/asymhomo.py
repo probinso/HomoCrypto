@@ -103,7 +103,7 @@ def getAlphaBeta(N):
         Over the Integers;  June 8th 2010
         Dijk,Gentry,Halevi,Vaikuntanathan
     """
-    return (N,N**5) #int(((((N**6)+1)//2)*log(N,2))**6))
+    return (N,N**2)#(N,N**5) #int(((((N**6)+1)//2)*log(N,2))**6))
 
 
 #Generates key pairs and hints
@@ -256,7 +256,7 @@ def encryptSk(sk,pk,y,N):
     for i in sk:
         encS[i]=1
 
-    return encrypt(encS,pk,y,N)
+    return encrypt(encS,pk,N)
 
 
 def fheExpandBit(c,y):
@@ -308,6 +308,7 @@ def recrypt(c,y,encS,N):
     
     expC = expand(c,y)
     
+    print len(encS),len(expC)
     assert(len(encS) == len(expC))
     # there is no reason that these should not be equivelent in length
     
@@ -352,7 +353,11 @@ def go(secure,message):
     cipher = encrypt(message,pk,N) #fheEncrypt(message,pk,y,N)
 
     print "encrypt  :: ", [int(i %2) for i in cipher]
-    encS = encrypt(S,pk,N)
+    #print S
+    #exit()
+    #def encryptSk(sk,pk,y,N):
+    encS = encryptSk(S,pk,y,N)
+    
     
     
     #def recrypt(c,y,encS,alpha,beta):
