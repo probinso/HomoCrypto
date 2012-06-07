@@ -300,7 +300,7 @@ def expand(c,y):
     tmp = [roundFrac(c*yi) for yi in y] 
     
     fixedWidth = makeFixedWidthConverter(len(bin(max(tmp))))
-    return map(lambda x: fixedWidth(binToIntList(x)),tmp)
+    return map(lambda x: fixedWidth(binToIntList(x))[::-1],tmp)
 
 def recrypt(c,y,encS,alpha,beta):
     BlockSize = beta // alpha
@@ -314,6 +314,7 @@ def recrypt(c,y,encS,alpha,beta):
     
     ly = [sum(islice(li,BlockSize))          # 
           for i in range(alpha)]             # 
+    
     
     binAdd = makeFixedWidthAdder(max(map(len,ly)))
     reduce(binAdd,ly)
