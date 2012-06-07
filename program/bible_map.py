@@ -1,6 +1,4 @@
 #!/usr/bin/python
-
-
 import sys
 from circuits import *
 from helpers import *
