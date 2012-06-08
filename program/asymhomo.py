@@ -103,7 +103,7 @@ def getAlphaBeta(N):
         Over the Integers;  June 8th 2010
         Dijk,Gentry,Halevi,Vaikuntanathan
     """
-    return (N,N*2)#(N,N**5) #int(((((N**6)+1)//2)*log(N,2))**6))
+    return (N,Ngon*2)#(N,N**5) #int(((((N**6)+1)//2)*log(N,2))**6))
 
 
 #Generates key pairs and hints
