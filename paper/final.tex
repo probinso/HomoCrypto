@@ -52,7 +52,7 @@ Advisor : Dr. David Bover}
 
 	Rather than attempt to provide a reduction in key and ciphertext size we provide a pure Python implementation of a variant of Gentry's original scheme that uses integers instead of lattices. Additionally we apply the Map/Reduce principle to the problem, showing how ciphertexts can be distributed across multiple machines in order increase the feasible workload that the system can handle. Finally we simulate the canonical example of homomorphic encryption above by providing a web interface where a user can submit an encrypted query to a homomorphic word count. The remainder of our paper is as follows.\\
 
-	We first provide a high level description of fully homomorphic encryption over the integers, including a process to generate asymmetric keys, encrypted and decrypt, evaluate homomorphic operations, and refresh the noise of a given ciphertext. We leave the proof of the given system to the original authors. We secondly provide a description of our codebase, including our encryption library and basic evaluation functions, our webserver, and our cluster. Finally we provide our results and reiterate the complications with the given scheme.
+	We first provide a high level description of fully homomorphic encryption over the integers, including a process to generate asymmetric keys, encrypted and decrypt, evaluate homomorphic operations, and refresh the noise of a given ciphertext. We leave the proof of the given system to the original authors. We secondly provide a description of our codebase, including our encryption library and basic evaluation functions, our web server, and our cluster. Finally we provide our results and reiterate the complications with the given scheme.
 
 
 \subsection{Notation}
@@ -68,8 +68,8 @@ Definition & Security Parameter & Secret Key Size   & Public Key Size & Hint Spa
 \end{center}
 
 \begin{itemize}
-\item The Security Parameter of our system  can be thought of as analogus to the bit parameter of AES
-\item The hint space and the garbage space refer to the Secret Key Vector, and optimization required for a shallow enough decryption circuit. This is sometimes refered to as the ``Sqaushed Decryption Circuit'' 
+\item The Security Parameter of our system  can be thought of as analogous to the bit parameter of AES
+\item The hint space and the garbage space refer to the Secret Key Vector, and optimization required for a shallow enough decryption circuit. This is sometimes referred to as the ``Sqaushed Decryption Circuit'' 
 \end{itemize}
 
 Finally, our system makes use of two modulus functions. For traditional modulus we use the notation $mod$. For Symmetric mod we use the notation $[x]_y$ to notate ``X symmetric mod Y.''
@@ -156,8 +156,7 @@ Given a security parameter \(\lambda\) there exists a private key space of
 
 \[2^{(\lambda^2-2)} - (2^{\lambda^{2-1}})-1\]
 
-The cryptographic hint uses the subset sum problem over a sparse subset. A brute force attack on this scheme requires the space. With \(\lambda = 8\), \(\beta  = 8^5\), and \(\alpha = \frac{8^5}{2}\), an attacker would need to calculat\
-e \(\left(\begin{matrix}\beta\\\alpha\end{matrix}\right)\) subset sums. This would take \(2\cdot 10^{133715000000000000000}\) floating point operations; at a petaflop of computational power this would take \(2\cdot 10^{133715}\) years \
+The cryptographic hint uses the subset sum problem over a sparse subset. A brute force attack on this scheme requires the space. With \(\lambda = 8\), \(\beta  = 8^5\), and \(\alpha = \frac{8^5}{2}\), an attacker would need to calculate \(\left(\begin{matrix}\beta\\\alpha\end{matrix}\right)\) subset sums. This would take \(2\cdot 10^{133715000000000000000}\) floating point operations; at a petaflop of computational power this would take \(2\cdot 10^{133715}\) years 
 to brute force the private key.
 
 
@@ -171,7 +170,7 @@ to brute force the private key.
 % support search.
 % ---- End Philip ------
 \subsection*{Python}
-The Python implementation of the code exists in two parts, a client (a webserver) and the server (the cluster). The client is able to generate public private key pairs, encrypt search queries, and post the request to the cluster. The webserver is implemented in Django, a Python based website framework. The result allows quick access to the Encryption library.\\
+The Python implementation of the code exists in two parts, a client (a web server) and the server (the cluster). The client is able to generate public private key pairs, encrypt search queries, and post the request to the cluster. The web server is implemented in Django, a Python based website framework. The result allows quick access to the Encryption library.\\
 
 The cluster is able to perform arbitrary operations on encrypted data using a library of Python that simulates logic gates underneath. Our goes on to implement full adders and multipliers, registers, and basic gate operations. The resulting library allows a user to implement their homomorphic functions using only binary operations.\\
 
@@ -189,7 +188,7 @@ Our Python implementation uses trivial parameters for the encryption scheme abov
 % architecture).                                        
 % ---- End Philip ------
 
- We addressed the time and space limitations of this encryption system by utilizing a distributed file system tool called Hadoop and a cluster of powerful computers available to us in Western's Computer Science Department. The two major states in a standard Hadoop job are Map, where tasks are distributed across the cluster, and Reduce, where the results of the cluster are collated into a final result. In our implementation Map attempts to split the encrypted search space (an english text) and concurrently sum up all the occurrences of the encrypted search parameter (a word). The Reduce then accumulates the counts each of those maps returned. \\
+ We addressed the time and space limitations of this encryption system by utilizing a distributed file system tool called Hadoop and a cluster of powerful computers available to us in Western's Computer Science Department. The two major states in a standard Hadoop job are Map, where tasks are distributed across the cluster, and Reduce, where the results of the cluster are collated into a final result. In our implementation Map attempts to split the encrypted search space (an English text) and concurrently sum up all the occurrences of the encrypted search parameter (a word). The Reduce then accumulates the counts each of those maps returned. \\
 
 In an effort to make our system as close to a real world example as possible we decided to keep the web server separate from Hadoop's master server, and this means passing encrypted data over the network. To achieve this the Hadoop cluster waits on input from our Django server via a Python listener. When the encrypted search query is received it starts the cluster and waits until the batch is completed. It then returns the result of the query back to the server, who can then decrypt the result for the user. \\
 
@@ -206,19 +205,19 @@ Even with the resources available to us, the overhead of this encryption scheme 
 % mostly for the purposes of clarity.
 % ---- End Philip ------
 
-\section*{Falure of Recrypt}
-The descriptions of recrypt in all of the papers glazed over significant portions as {\em trivial} and left us in a stunted state. The described purpose of recrypt is to take a cipherbit \(c\) unker \(key_0\) and simultaniously perform  {\tt dec(enc(\(c\),\(key_1\)),\(key_0\))}. Now because we have a public key system, we can look at this differently using public key \(pk\) and secret key \(sk\)  we have {\tt dec(enc(\(c\),\(pk\)),\(sk\))}. Ideally we would be able to just perform these operations sequentially, however this circuit operation causes to much noise. In order to do this we provide {\em hint} information. 
+\section*{Failures of Recrypt}
+The descriptions of recrypt in all of the papers glazed over significant portions as {\em trivial} and left us in a stunted state. The described purpose of recrypt is to take a cipherbit \(c\) under \(key_0\) and simultaneously perform  {\tt dec(enc(\(c\),\(key_1\)),\(key_0\))}. Now because we have a public key system, we can look at this differently using public key \(pk\) and secret key \(sk\)  we have {\tt dec(enc(\(c\),\(pk\)),\(sk\))}. Ideally we would be able to just perform these operations sequentially, however this circuit operation causes to much noise. In order to do this we provide {\em hint} information. 
 
 The {\em hint } is represented as a vector of rationals \(\in (0,2)\) who satisfies our subset sum and an encrypted bit-vector denoting our significant rational entries. The papers are very unclear how this {\tt recryption} circuit should be implemented. 
 
 \[ \text{{\bf LSB}}(c) \text{  XOR  } \text{{\bf LSB}}\left(\left\lfloor \sum\limits_{i\in\beta}s_i\cdot y_i\cdot c \right\rfloor\right)\]
 
-What none of the papers tell you is that the cipher bit \(c\) is to be expanded to its binary representation, and not encrypted for this operation. This makes a world of difference in implementation and runtime. It also provides a great volume of {\em true zeros } that negate a significant amount of noise from our circuit operations. Additionally no paper reduces this problem to exclusively working over the least significant bit. Our implementation currently expands the cipherbit into its binary form, then does its circuit operations over the entire data block. The result of which runs to long and results in thrashing and python panic crash over one encrypted bit with a low security parameter on a machine with 16GB-ram. 
+What none of the papers tell you is that the cipher bit \(c\) is to be expanded to its binary representation, and not encrypted for this operation. This makes a world of difference in implementation and run time. It also provides a great volume of {\em true zeros } that negate a significant amount of noise from our circuit operations. Additionally no paper reduces this problem to exclusively working over the least significant bit. Our implementation currently expands the cipherbit into its binary form, then does its circuit operations over the entire data block. The result of which runs to long and results in thrashing and python panic crash over one encrypted bit with a low security parameter on a machine with 16GB-ram. 
 
 
 
 \section*{In the future}
-\hspace{1em}The purposed system is effective but not efficient. In order to achieve enough speed up and make the system realistic we propose to parallelize server side operations across the Hadoop distributed computing system.
+\hspace{1em}The purposed system is effective but not efficient. In order to achieve enough speed up and make the system realistic we propose to paralleled server side operations across the Hadoop distributed computing system.
 \parskip 1em
 
 \hspace{1em}Currently our proposed system uses elementary school style long multiplication, an operation that is \(N^2\) for the number of digits in the operands. Even with Karatusba's algorithm \(\theta( n \lg n)\) implemented in python the system does not achieve a sufficient speed up. We plan to implement the multiplications on the video cards of our lab using PyCuda and Fast DFT. This parallelization would achieve a speed not normally usable in python.
@@ -228,3 +227,5 @@ What none of the papers tell you is that the cipher bit \(c\) is to be expanded 
 
 
 \end{document}
+
+% LocalWords:  calculat petaflop
