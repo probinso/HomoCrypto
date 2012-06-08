@@ -120,7 +120,7 @@ Given a cipher text $C$, encrypt the secret key $S$. Apply the decryption circui
 % support search.
 % ---- End Philip ------
 \subsection*{Python}
-The Python implementation of the code exists in two parts, a client (a webserver) and the server (the cluster.) The Client is able to generate public private key pairs, encrypt search queries, and post the request to the cluster. The webserver is implemented in Django, a Python based website framework. The result allows quick access to the Encryption library.\\
+The Python implementation of the code exists in two parts, a client (a webserver) and the server (the cluster.) The Client is able to generate public private key pairs, encrypt search queries, and post the request to the cluster. The webserver is implemented in Django, a Python based web framework which allows for quick access to our encryption library.  \\
 
 The cluster is able to perform arbitrary operations on encrypted data using a library of Python that simulates logic gates underneath. Our goes on to implement full adders and multipliers, registers, and basic gate operations. The resulting library allows a user to implement their homomorphic functions using only binary operations.\\
 
@@ -155,11 +155,10 @@ Even with the resources available to us, the overhead of this encryption scheme 
 % ---- End Philip ------
 
 \section*{In the future}
-\hspace{1em}The purposed system is effective but not efficient. In order to achieve enough speed up and make the system realistic we propose to parallelize server side operations across the Hadoop distributed computing system.
+\hspace{1em}Due to the resouce limitations of our webserver, we were forced to make some compromises about how robust our implementation could be. Giving users the option to generate, view, and share the public key with the Hadoop cluster are features that were scrapped due to the strain it put on the ACM server. 
 \parskip 1em
 
 \hspace{1em}Currently our proposed system uses elementary school style long multiplication, an operation that is \(N^2\) for the number of digits in the operands. Even with Karatusba's algorithm \(\theta( n \lg n)\) implemented in python the system does not achieve a sufficient speed up. We plan to implement the multiplications on the video cards of our lab using PyCuda and Fast DFT. This parallelization would achieve a speed not normally usable in python.
-
 
 \hspace{1em}Finally in order to shrink space complexity we plan to explore using n-ary systems rather than a base-2 implementation. This research would require a more formal address of our co-sets and ideals.
 
