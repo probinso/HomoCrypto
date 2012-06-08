@@ -32,6 +32,8 @@ def mplex(G):
     # takes in a binary gate and turns it into
     # a multiplexer for that gate
     tG = lambda (a,b): G(a,b)
+
+    """
     def plex(L):
         assert(len(L)>0)
         if len(L) == 2: return G(L[0],L[1])
@@ -46,6 +48,23 @@ def mplex(G):
             out.append(B[-1])
             
         return plex(out)
+    """
+    
+    def plex(L):
+        assert(len(L)>0)
+        out = L
+        while True:
+        
+            if len(out) == 2: return G(out[0],out[1])
+            if len(out) == 1: return out[0]
+            A = out[:len(out)//2]
+            B = out[len(out)//2:]
+            
+            out = map(tG,zip(A,B))
+            
+            if len(A)!=len(B):
+                out.append(B[-1])
+            
 
     return plex
 
@@ -120,7 +139,10 @@ def makeFixedAddr(D):
         L1 = toFixedWidth(L1)
         L2 = toFixedWidth(L2)
 
-        Z = zip(L1,L2)[::-1]
+        Z = zip(L1,L2) #[::-1]
+        # originally removed in place, but copying the list adds
+        # to memory consumption
+        Z.reverse()
         C = [0]
         for x in Z:
             C = [carry(x[0],x[1],C[0])]+C
@@ -134,7 +156,7 @@ def makeFixedAddr(D):
 
 Add16 = makeFixedAddr(16)
 addReduce = mplex(Add16) # if this works i'll be so yoked !
-
+# I was so yoked!
 
 def makeMult():
     # positive integer multiplier ... couldn't get past
@@ -195,7 +217,7 @@ def makeMultB():
             Top,Bot = Bot,Top
         return Top,Bot
 
-
+    """
     def Mult(L1,L2):
         # This might be a minimal noise multiplier,
         #   It may be possible to shrink noise by
@@ -231,7 +253,36 @@ def makeMultB():
         # I am getting one more bidget then I would like not sure
         #   why, but multiplier works w/ positive integers
         return Val[0]
+    """
+    
+    tand = lambda (a,b): band(a,b)
+    def Mult(L1,L2):
+        # This might be a minimal noise multiplier,
+        #   It may be possible to shrink noise by
+        #   adding opposing ends of the bitstream
+        #   but I am unsure of this.
+        Top,Bot = identTop(L1,L2)
+
+        Val = [ map(lambda x: band(t,x),Bot)+[0]*i for i,t in enumerate(Top) ]
+        # the bits are reversed so that we can handle carying them better
+
+        while True:
+            acc = []
+            i = 0
+            if len(Val) == 1: return Val[0]
+            while len(Val) > 1:
+                if i % 2 == 0:
+                    acc.append(Add16(Val[0],Val[-1]))
+                else:
+                    acc.insert(0,(Add16(Val[0],Val[1])))
+                i+=1
+                Val = Val[1:-1]
+            i = 0
+            Val = acc
+            
     return Mult
+
+
 
 
 MULTB = makeMultB()
