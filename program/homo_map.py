@@ -5,8 +5,18 @@ import sys
 def main():
 	count=0
 
-	word="God"
-	wordbin = intListToBinList(word)
+	word="god"
+
+	x=sys.stdin.readline().strip()
+
+	x=int(x)
+	query=[]
+	for i in range(x):
+		line=sys.stdin.readline().strip()
+		query.append(int(line))
+		
+
+	
 	for i in sys.stdin:
 		try:
 			line=[]
