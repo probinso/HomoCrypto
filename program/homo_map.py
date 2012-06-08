@@ -27,10 +27,19 @@ def main():
 				except:
 					continue
 			count = search(wordbin,line,[0]) 
+<<<<<<< HEAD
+			break
+		except ValueError:
+			x=open("/hdfs/tmp/error.txt","a")
+			x.write("value error on input:"+i)
+			x.close()
+	print str(count)
+=======
 		except:
 			#print "errorvaly on line",i
 			continue
 			
 	print count
+>>>>>>> 1c6b566b555e6abfe6b76aed9e37744080a73a84
 
 main()
