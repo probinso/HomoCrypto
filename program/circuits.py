@@ -254,6 +254,7 @@ def makeMultB():
         #   why, but multiplier works w/ positive integers
         return Val[0]
     """
+    
     tand = lambda (a,b): band(a,b)
     def Mult(L1,L2):
         # This might be a minimal noise multiplier,

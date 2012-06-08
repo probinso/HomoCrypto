@@ -103,7 +103,7 @@ def getAlphaBeta(N):
         Over the Integers;  June 8th 2010
         Dijk,Gentry,Halevi,Vaikuntanathan
     """
-    return (N,N**2)#(N,N**5) #int(((((N**6)+1)//2)*log(N,2))**6))
+    return (N,N*2)#(N,N**5) #int(((((N**6)+1)//2)*log(N,2))**6))
 
 
 #Generates key pairs and hints
@@ -324,16 +324,13 @@ def recrypt(c,y,encS,N):
     assert(len(encS) == len(expC))
     # there is no reason that these should not be equivelent in length
     
-    li = reduce(lambda a,b:a+b,
-                [map(lambda a: ski*a,cei) 
-                 for ski,cei in zip(encS,expC)
-                 ]
-                )
+    li = [map(lambda a: ski*a,cei) 
+          for ski,cei in zip(encS,expC)]
     
-    
+    del expC
     print "*",
 
-    ly = split(li,BlockSize)
+    ly = split( reduce(lambda a,b:a+b, li),BlockSize)
     # this is essentially used to change the dimmentions of our matrix
     # so that the y_i values are lined up 
     del li
