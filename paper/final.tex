@@ -7,6 +7,15 @@
 %\addtolength{\textwidth}{1.75in} \addtolength{\oddsidemargin}{-0.9in}
 \usepackage[margin=1in]{geometry}
 
+
+\usepackage{multicol}
+
+\usepackage{amsmath,amsthm,amssymb}
+\usepackage{verbatim}
+\usepackage{circuitikz}
+
+
+
 \title{Homomorphic Encryption Systems}
 \date{\today}
 \author{
@@ -19,7 +28,7 @@ Advisor : Dr. David Bover}
 \maketitle
 
 \begin{abstract}
-\hspace{1em}We present a formal inquiry of the first fully homomorphic encryption scheme proposed by Craig Gentry in 2008. Moreover we introduce the first implementation of this cipher in the Python programming language. A fully homomorphic encryption scheme enables the execution of arbitrary operations on encrypted data without the decryption key which, put simply, allows for a third party to  store and manipulate sensitive information without the ability to interpret it.\\ 
+\hspace{1em}We present a formal inquiry of the first fully homomorphic encryption scheme proposed by Craig Gentry in 2008. Moreover we introduce the first implementation of this cipher in the Python programming language, known as the Dijk Gentry Halevi Vaikuntanathan (DGHV) cipher. A fully homomorphic encryption scheme enables the execution of arbitrary operations on encrypted data without the decryption key which, put simply, allows for a third party to  store and manipulate sensitive information without the ability to interpret it.\\ 
 
 \hspace{1em}Our investigation includes a high level synopsis of the mathematics involved in fully homomorphic encryption, a complete demonstration of our implementation in Python, and finally a overview of the space and asymptotic time complexities of the proposed system. 
 \end{abstract}
@@ -45,6 +54,22 @@ Advisor : Dr. David Bover}
 	We first provide a high level description of fully homomorphic encryption over the integers, including a process to generate asymmetric keys, encrypted and decrypt, evaluate homomorphic operations, and refresh the noise of a given ciphertext. We leave the proof of the given system to the original authors. We secondly provide a description of our codebase, including our encryption library and basic evaluation functions, our webserver, and our cluster. Finally we provide our results and reiterate the complications with the given scheme.
 
 
+\subsection{Notation}
+In our paper we use an amalgamation of notation from the current field of papers:
+
+
+\begin{center}
+\begin{tabular}{ l | l | l | l | l | l }
+\hline
+Parameter & $\lambda$/ N & P & Q & $\alpha$ & $\beta$ \\ \hline
+Definition & Security Parameter & Secret Key Size   & Public Key Size & Hint Space & Garbage Space  \\ \hline
+\end{tabular}
+\end{center}
+
+\begin{itemize}
+\item The Security Parameter of our system  can be thought of as analogus to the bit parameter of AES
+\item The hint space and the garbage space refer to the Secret Key Vector, and optimization required for a shallow enough decryption circuit. This is sometimes refered to as the ``Sqaushed Decryption Circuit'' 
+\end{itemize}
 
 \section*{Components}
 % ------ Philip --------
@@ -52,16 +77,10 @@ Advisor : Dr. David Bover}
 % Theses are relatively simple and give us clear intent.
 % Also we have the information already on the poster, so
 % no additional work. 
-% 
-% Also we should talk about what some of these variables 
-% mean for human readability. like alpha/beta s relation
-% to the usbset sum problem, and what a nist equivelent 
-% security parameter would be. We can pull more from the 
-% poster, as this and the poster are to be seperate.
-%
-% We may want to use listings to actually place our code
-% into each of these sections that are relivent. 
-% ---- End Philip ------
+
+
+
+
 
 \begin{center}
 \begin{tabular}{  l | l | l | l | l | l }
@@ -95,6 +114,54 @@ Given two cipher texts, $C_1, C_2$ and a boolean circuit $F$. Apply the circuit 
 \subsection*{Recrypt}
 Given a cipher text $C$, encrypt the secret key $S$. Apply the decryption circuit to the ciphertext and the encrypted secret key.
 \\
+
+\subsection*{Circuity}
+\begin{multicols}{2}
+
+\resizebox{\columnwidth}{!}{
+\begin{circuitikz}\draw
+(0,0) node[and port,scale=1.5] (myand) {}
+(myand.in 1) node[anchor=east] {{\small \({b_0}\)}}
+(myand.in 2) node[anchor=east] {{\small \({b_1}\)}}
+(myand.out) node[anchor=west] {{\small\({b_0 \cdot b_1}\;(\text{mod }2)\)}}
+;\end{circuitikz}
+}
+\begin{align*}                                                                                                                                                                                                                              
+  c_i\cdot c_j &= \left(p\cdot q_i + 2\cdot n_i + b_i\right)\\&\;\cdot\left(p\cdot q_j + 2\cdot n_j + b_j\right)\\                                                                                                                          
+  &= p\cdot\hat{q} + 2\cdot\hat{n} + \left(b_i\cdot b_j\right)                                                                                                                                                                              
+\end{align*}
+
+
+\resizebox{\columnwidth}{!}{
+\begin{circuitikz}\draw
+(0,0) node[xor port,scale=1.5] (myand) {}
+(myand.in 1) node[anchor=east] {{\small\({b_0}\)}}
+(myand.in 2) node[anchor=east] {{\small\({b_1}\)}}
+(myand.out) node[anchor=west] {{\small \({b_0 + b_1}\;(\text{mod } 2)\)}}
+;\end{circuitikz}
+}
+\begin{align*}                                                                                                                                                                                                                              
+  c_i+ c_j &= \left(p\cdot q_i + 2\cdot n_i + b_i\right)\\&\;+\left(p\cdot q_j + 2\cdot n_j + b_j\right)\\                                                                                                                                  
+%  &= p\cdot(q_i+q_j)+2\cdot(n_i+n_j) \\&\;+ b_i + b_j\\                                                                                                                                                                                    
+  &= p\cdot\hat{q} + 2\cdot\hat{n} +\left(b_i+b_j\right)                                                                                                                                                                                    
+\end{align*}
+
+\end{multicols}
+
+
+
+
+\subsection*{Security}
+Given a security parameter \(\lambda\) there exists a private key space of
+
+\[2^{(\lambda^2-2)} - (2^{\lambda^{2-1}})-1\]
+
+The cryptographic hint uses the subset sum problem over a sparse subset. A brute force attack on this scheme requires the space. With \(\lambda = 8\), \(\beta  = 8^5\), and \(\alpha = \frac{8^5}{2}\), an attacker would need to calculat\
+e \(\left(\begin{matrix}\beta\\\alpha\end{matrix}\right)\) subset sums. This would take \(2\cdot 10^{133715000000000000000}\) floating point operations; at a petaflop of computational power this would take \(2\cdot 10^{133715}\) years \
+to brute force the private key.
+
+
+
 \section*{Implementation}
 % ------ Philip --------
 % We never define the acronym DGHV. We should also grant 
@@ -122,9 +189,9 @@ Our Python implementation uses trivial parameters for the encryption scheme abov
 % architecture).                                        
 % ---- End Philip ------
 
- We addressed the time and space limitations of this encryption system by utilizing a distributed file system tool called Hadoop and a cluster of powerful computers available to us in Western's Computer Science Department. Hadoop is derived from Google's MapReduce. In our system the Map, attempts to sum up all the occurrences of a word in a word search. The reduce, sums up all the counts each of those maps returned.\\
+ We addressed the time and space limitations of this encryption system by utilizing a distributed file system tool called Hadoop and a cluster of powerful computers available to us in Western's Computer Science Department. The two major states in a standard Hadoop job are Map, where tasks are distributed across the cluster, and Reduce, where the results of the cluster are collated into a final result. In our implementation Map attempts to split the encrypted search space (an english text) and concurrently sum up all the occurrences of the encrypted search parameter (a word). The Reduce then accumulates the counts each of those maps returned. 
 
-The Hadoop cluster waits on input from our Django server using NetCat. When the encrypted search query is received it starts the cluster and waits until the batch is completed. It then Netcats the result of the query back to the server, who can then decrypt the result for the user.
+In an effort to make our system as close to a real world example as possible we decided to keep the web server separate from Hadoop's master server, and this means passing encrypted data over the network. To achieve this the Hadoop cluster waits on input from our Django server via a Python listener. When the encrypted search query is received it starts the cluster and waits until the batch is completed. It then returns the result of the query back to the server, who can then decrypt the result for the user. 
 
 While a word search is the canonical Hadoop map reduce example, two issues arise when attempting to implement the system. Firstly the system must perform a word search over encrypted binary information. In order to limit the amount of work required per comparison, the search query is first XORed with it's comparison test. If the result produces all zeros, there was a successful string match. However as the bits are encrypted, the server has no way of telling if there was a successful match. It therefore uses a torunament tree over the result of the XOR using OR operations. If there were any non zero elements, the result of the tournament will be one, specifying a mismatch. Therefore the last output can be put through a not gate, and the result can be added to the map's total count.
 \section*{Conclusion}
