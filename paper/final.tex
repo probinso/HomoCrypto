@@ -6,6 +6,7 @@
 %\addtolength{\topmargin}{-0.5in} \setlength{\textheight}{9in}
 %\addtolength{\textwidth}{1.75in} \addtolength{\oddsidemargin}{-0.9in}
 \usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amsthm,amssymb}
 
 \title{Homomorphic Encryption Systems}
 \date{\today}
@@ -21,7 +22,7 @@ Advisor : Dr. David Bover}
 \begin{abstract}
 \hspace{1em}We present a formal inquiry of the first fully homomorphic encryption scheme proposed by Craig Gentry in 2008. Moreover we introduce the first implementation of this cipher in the Python programming language. A fully homomorphic encryption scheme enables the execution of arbitrary operations on encrypted data without the decryption key which, put simply, allows for a third party to  store and manipulate sensitive information without the ability to interpret it.\\ 
 
-\hspace{1em}Our investigation includes a high level synopsis of the mathematics involved in fully homomorphic encryption, a complete demonstration of our implementation in Python, and finally a overview of the space and asymptotic time complexities of the proposed system. 
+\hspace{1em}Our investigation includes a high level synopsis of the mathematics involved in fully homomorphic encryption, a complete description of our implementation in Python, and finally a overview of the space and asymptotic time complexities of the proposed system. 
 \end{abstract}
 
 
@@ -58,7 +59,7 @@ Advisor : Dr. David Bover}
 % to the usbset sum problem, and what a nist equivelent 
 % security parameter would be. We can pull more from the 
 % poster, as this and the poster are to be seperate.
-%
+% 
 % We may want to use listings to actually place our code
 % into each of these sections that are relivent. 
 % ---- End Philip ------
@@ -137,6 +138,17 @@ Even with the resources available to us, the overhead of this encryption scheme 
 % cross language facilities for speedup that we do not,  
 % mostly for the purposes of clarity.
 % ---- End Philip ------
+
+\section*{Falure of Recrypt}
+The descriptions of recrypt in all of the papers glazed over significant portions as {\em trivial} and left us in a stunted state. The described purpose of recrypt is to take a cipherbit \(c\) unker \(key_0\) and simultaniously perform  {\tt dec(enc(\(c\),\(key_1\)),\(key_0\))}. Now because we have a public key system, we can look at this differently using public key \(pk\) and secret key \(sk\)  we have {\tt dec(enc(\(c\),\(pk\)),\(sk\))}. Ideally we would be able to just perform these operations sequentially, however this circuit operation causes to much noise. In order to do this we provide {\em hint} information. 
+
+The {\em hint } is represented as a vector of rationals \(\in (0,2)\) who satisfies our subset sum and an encrypted bit-vector denoting our significant rational entries. The papers are very unclear how this {\tt recryption} circuit should be implemented. 
+
+\[ \text{{\bf LSB}}(c) \text{  XOR  } \text{{\bf LSB}}\left(\left\lfloor \sum\limits_{i\in\beta}s_i\cdot y_i\cdot c \right\rfloor\right)\]
+
+What none of the papers tell you is that the cipher bit \(c\) is to be expanded to its binary representation, and not encrypted for this operation. This makes a world of difference in implementation and runtime. It also provides a great volume of {\em true zeros } that negate a significant amount of noise from our circuit operations. Additionally no paper reduces this problem to exclusively working over the least significant bit. Our implementation currently expands the cipherbit into its binary form, then does its circuit operations over the entire data block. 
+
+
 
 \section*{In the future}
 \hspace{1em}The purposed system is effective but not efficient. In order to achieve enough speed up and make the system realistic we propose to parallelize server side operations across the Hadoop distributed computing system.
