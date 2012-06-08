@@ -212,7 +212,7 @@ The {\em hint } is represented as a vector of rationals \(\in (0,2)\) who satisf
 
 \[ \text{{\bf LSB}}(c) \text{  XOR  } \text{{\bf LSB}}\left(\left\lfloor \sum\limits_{i\in\beta}s_i\cdot y_i\cdot c \right\rfloor\right)\]
 
-What none of the papers tell you is that the cipher bit \(c\) is to be expanded to its binary representation, and not encrypted for this operation. This makes a world of difference in implementation and runtime. It also provides a great volume of {\em true zeros } that negate a significant amount of noise from our circuit operations. Additionally no paper reduces this problem to exclusively working over the least significant bit. Our implementation currently expands the cipherbit into its binary form, then does its circuit operations over the entire data block. 
+What none of the papers tell you is that the cipher bit \(c\) is to be expanded to its binary representation, and not encrypted for this operation. This makes a world of difference in implementation and runtime. It also provides a great volume of {\em true zeros } that negate a significant amount of noise from our circuit operations. Additionally no paper reduces this problem to exclusively working over the least significant bit. Our implementation currently expands the cipherbit into its binary form, then does its circuit operations over the entire data block. The result of which runs to long and results in thrashing over one encrypted bit with a low security parameter on a machine with 16GB-ram. 
 
 
 
