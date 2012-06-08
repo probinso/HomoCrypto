@@ -10,7 +10,7 @@ INPUT_LOCATION=/hdfs/user/hajya/jfcbi.txt
 OUTPUT_LOCATION=/tmp/bibleCount
 
 $HADOOP_PATH jar $HADOOP_STREAMING_PATH \
-			-D mapred.max.split.size=1MB \
+			-D mapred.max.split.size=24KB \
 			-D mapred.maps.tasks=152 \
 			-D mapred.reduce.tasks=1 \
 			-file $HELPERS_FILE \
