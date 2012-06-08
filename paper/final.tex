@@ -7,6 +7,15 @@
 %\addtolength{\textwidth}{1.75in} \addtolength{\oddsidemargin}{-0.9in}
 \usepackage[margin=1in]{geometry}
 
+
+\usepackage{multicol}
+
+\usepackage{amsmath,amsthm,amssymb}
+\usepackage{verbatim}
+\usepackage{circuitikz}
+
+
+
 \title{Homomorphic Encryption Systems}
 \date{\today}
 \author{
@@ -68,16 +77,10 @@ Definition & Security Parameter & Secret Key Size   & Public Key Size & Hint Spa
 % Theses are relatively simple and give us clear intent.
 % Also we have the information already on the poster, so
 % no additional work. 
-% 
-% Also we should talk about what some of these variables 
-% mean for human readability. like alpha/beta s relation
-% to the usbset sum problem, and what a nist equivelent 
-% security parameter would be. We can pull more from the 
-% poster, as this and the poster are to be seperate.
-%
-% We may want to use listings to actually place our code
-% into each of these sections that are relivent. 
-% ---- End Philip ------
+
+
+
+
 
 \begin{center}
 \begin{tabular}{  l | l | l | l | l | l }
@@ -111,6 +114,54 @@ Given two cipher texts, $C_1, C_2$ and a boolean circuit $F$. Apply the circuit 
 \subsection*{Recrypt}
 Given a cipher text $C$, encrypt the secret key $S$. Apply the decryption circuit to the ciphertext and the encrypted secret key.
 \\
+
+\subsection*{Circuity}
+\begin{multicols}{2}
+
+\resizebox{\columnwidth}{!}{
+\begin{circuitikz}\draw
+(0,0) node[and port,scale=1.5] (myand) {}
+(myand.in 1) node[anchor=east] {{\small \({b_0}\)}}
+(myand.in 2) node[anchor=east] {{\small \({b_1}\)}}
+(myand.out) node[anchor=west] {{\small\({b_0 \cdot b_1}\;(\text{mod }2)\)}}
+;\end{circuitikz}
+}
+\begin{align*}                                                                                                                                                                                                                              
+  c_i\cdot c_j &= \left(p\cdot q_i + 2\cdot n_i + b_i\right)\\&\;\cdot\left(p\cdot q_j + 2\cdot n_j + b_j\right)\\                                                                                                                          
+  &= p\cdot\hat{q} + 2\cdot\hat{n} + \left(b_i\cdot b_j\right)                                                                                                                                                                              
+\end{align*}
+
+
+\resizebox{\columnwidth}{!}{
+\begin{circuitikz}\draw
+(0,0) node[xor port,scale=1.5] (myand) {}
+(myand.in 1) node[anchor=east] {{\small\({b_0}\)}}
+(myand.in 2) node[anchor=east] {{\small\({b_1}\)}}
+(myand.out) node[anchor=west] {{\small \({b_0 + b_1}\;(\text{mod } 2)\)}}
+;\end{circuitikz}
+}
+\begin{align*}                                                                                                                                                                                                                              
+  c_i+ c_j &= \left(p\cdot q_i + 2\cdot n_i + b_i\right)\\&\;+\left(p\cdot q_j + 2\cdot n_j + b_j\right)\\                                                                                                                                  
+%  &= p\cdot(q_i+q_j)+2\cdot(n_i+n_j) \\&\;+ b_i + b_j\\                                                                                                                                                                                    
+  &= p\cdot\hat{q} + 2\cdot\hat{n} +\left(b_i+b_j\right)                                                                                                                                                                                    
+\end{align*}
+
+\end{multicols}
+
+
+
+
+\subsection*{Security}
+Given a security parameter \(\lambda\) there exists a private key space of
+
+\[2^{(\lambda^2-2)} - (2^{\lambda^{2-1}})-1\]
+
+The cryptographic hint uses the subset sum problem over a sparse subset. A brute force attack on this scheme requires the space. With \(\lambda = 8\), \(\beta  = 8^5\), and \(\alpha = \frac{8^5}{2}\), an attacker would need to calculat\
+e \(\left(\begin{matrix}\beta\\\alpha\end{matrix}\right)\) subset sums. This would take \(2\cdot 10^{133715000000000000000}\) floating point operations; at a petaflop of computational power this would take \(2\cdot 10^{133715}\) years \
+to brute force the private key.
+
+
+
 \section*{Implementation}
 % ------ Philip --------
 % We never define the acronym DGHV. We should also grant 
