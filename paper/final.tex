@@ -45,6 +45,22 @@ Advisor : Dr. David Bover}
 	We first provide a high level description of Fully Homomorphic Encryption over the integers, including a process to generate asymmetric keys, encrypted and decrypt, evaluate homomorphic operations, and refresh the noise of a given ciphertext. We leave the proof of the given system to the original authors. We Secondly provide a description of our codebase, including our encryption library and basic evaluation functions, our webserver, and our cluster. Finally we provide our results and reiterate the complications with the given scheme.
 
 
+\subsection{Notation}
+In our paper we use an amalgamation of notation from the current field of papers:
+
+
+\begin{center}
+\begin{tabular}{ l | l | l | l | l | l }
+\hline
+Parameter & $\lambda$/ N & P & Q & $\alpha$ & $\beta$ \\ \hline
+Definition & Security Parameter & Secret Key Size   & Public Key Size & Hint Space & Garbage Space  \\ \hline
+\end{tabular}
+\end{center}
+
+\begin{itemize}
+\item The Security Parameter of our system  can be thought of as analogus to the bit parameter of AES
+\item The hint space and the garbage space refer to the Secret Key Vector, and optimization required for a shallow enough decryption circuit. This is sometimes refered to as the ``Sqaushed Decryption Circuit'' 
+\end{itemize}
 
 \section*{Components}
 % ------ Philip --------
