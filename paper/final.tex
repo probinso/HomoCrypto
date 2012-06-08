@@ -71,6 +71,10 @@ Definition & Security Parameter & Secret Key Size   & Public Key Size & Hint Spa
 \item The hint space and the garbage space refer to the Secret Key Vector, and optimization required for a shallow enough decryption circuit. This is sometimes refered to as the ``Sqaushed Decryption Circuit'' 
 \end{itemize}
 
+Finally, our system makes use of two modulus functions. For traditional modulus we use the notation $mod$. For Symmetric mod we use the notation $[x]_y$ to notate ``X symmetric mod Y.''
+We denote $Mods(x,y):=(abs(x,y)<abs(-x,y)$?return x mod y:return $-x mod y$
+
+\end{verbatim}   
 \section*{Components}
 % ------ Philip --------
 % We never discuss the mathematics behind circuit ops 
