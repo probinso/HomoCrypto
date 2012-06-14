@@ -310,7 +310,7 @@ def expand(c,y):
     tmp = [roundFrac(c*yi) for yi in y] 
     
     fixedWidth = makeFixedWidthConverter(len(bin(max(tmp))))
-    return map(lambda x: fixedWidth(intToBinList(x))[::-1],tmp)
+    return map(lambda x: fixedWidth(intToBinList(x)),tmp)
 
 def recrypt(c,y,encS,N):
     alpha, beta = getAlphaBeta(N)
@@ -320,7 +320,7 @@ def recrypt(c,y,encS,N):
     #print expC[0],
     #exit()
     print "*",
-    print len(encS),len(expC),len(y),(alpha+beta)
+    print len(encS),len(expC),len(y)
     assert(len(encS) == len(expC))
     # there is no reason that these should not be equivelent in length
     
@@ -330,9 +330,13 @@ def recrypt(c,y,encS,N):
     del expC
     print "*",
 
-    ly = split( reduce(lambda a,b:a+b, li),BlockSize)
+    
+    
+    #ly = split( reduce(lambda a,b:a+b, li),BlockSize)
     # this is essentially used to change the dimmentions of our matrix
     # so that the y_i values are lined up 
+    
+    res = addReduce(li)
     del li
    
     """
@@ -344,8 +348,8 @@ def recrypt(c,y,encS,N):
     
     print "*",
     #exit()
-    res = addReduce(ly)
-    del ly
+    #res = addReduce(ly)
+    #del ly
     print "*",
     print
     return res[1]+res[0] + c & 1
