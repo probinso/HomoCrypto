@@ -217,11 +217,11 @@ What none of the papers tell you is that the cipher bit \(c\) is to be expanded 
 
 
 \section*{In the future}
-\hspace{1em}The purposed system is effective but not efficient. In order to achieve enough speed up and make the system realistic we propose to paralleled server side operations across the Hadoop distributed computing system.
+\hspace{1em}Due to the resouce limitations of our webserver, we were forced to make some compromises about how robust our implementation could be. Giving users the option to generate, view, and share the public key with the Hadoop cluster are features that were scrapped due to the strain it put on the ACM server. 
+
 \parskip 1em
 
 \hspace{1em}Currently our proposed system uses elementary school style long multiplication, an operation that is \(N^2\) for the number of digits in the operands. Even with Karatusba's algorithm \(\theta( n \lg n)\) implemented in python the system does not achieve a sufficient speed up. We plan to implement the multiplications on the video cards of our lab using PyCuda and Fast DFT. This parallelization would achieve a speed not normally usable in python.
-
 
 \hspace{1em}Finally in order to shrink space complexity we plan to explore using n-ary systems rather than a base-2 implementation. This research would require a more formal address of our co-sets and ideals.
 
