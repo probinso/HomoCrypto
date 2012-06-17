@@ -325,13 +325,17 @@ def recrypt(c,y,encS,N):
     assert(len(encS) == len(expC))
     # there is no reason that these should not be equivelent in length
     
+    
     li = [map(lambda a: ski*a,cei) 
           for ski,cei in zip(encS,expC)]
     
     del expC
     print "*",
 
-    
+    addReduce = mplex(
+        makeFixedAdder(
+            len(expC[0])
+            ))
     
     #ly = split( reduce(lambda a,b:a+b, li),BlockSize)
     # this is essentially used to change the dimmentions of our matrix
