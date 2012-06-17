@@ -49,15 +49,23 @@ def parityList(L):
     return map(lambda x : int(x%2), L)
 
 
-def intListToBinList(i):
+def intListToBinList(string):
+    """
     #takes a string and returns a list of binary representation of each letter
     newlist =[]
-    word = list(i)
+    word = list(string)
     fixed = makeFixedWidthConverter(8)
     for letter in word:
         newlist.append(fixed(intToBinList(ord(letter))))
     return reduce(lambda a,b: a+b,newlist)
     #return newlist
+    """
+    # takes in a string returns list of bits
+    fixed = makeFixedWidthConverter(8)
+    return sum(map(lambda x: 
+                   fixed(map(int,bin(ord(x))[2:])),
+                   string)
+               )
 
 def split(input,size):
     # splits list into a list of lists each length size
