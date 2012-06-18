@@ -64,9 +64,9 @@ def encrypt(message,pk,N):
     What needed to happen was updating the traditional
     """
 
-    _,mx = bitLims(2*N)
+    mn,mx = bitLims(-2*N)
 
-    cipher = [(2*(randomSubSetSum(pk)+(random.randrange(-1*mx,mx)))+i)% pk[0] for i in message]
+    cipher = [(2*(randomSubSetSum(pk)+(random.randrange(mn,mx)))+i)% pk[0] for i in message]
 
     #print "encrypted bits :: ",[x % 2 for x in cipher]
     return cipher
@@ -141,7 +141,7 @@ def hintGen(f,alpha):
     F = lambda x: Fraction(round(
             random.random(),     # produce random number \in (0,1)
             int(log(alpha,2)+3+1)# to this many degrees of accuracy
-            ))*x# then cast it as a Fraction
+            ))*x                 # then cast it as a Fraction
     """
     we move *x to the outside of the function above because we
     want to insure that the function does not round to zero
@@ -316,7 +316,7 @@ def expand(c,y):
 def recrypt(c,y,encS,N):
     alpha, beta = getAlphaBeta(N)
     BlockSize = beta // alpha
-    
+
     expC = expand(c,y)
     #print expC[0],
     #exit()
@@ -336,27 +336,27 @@ def recrypt(c,y,encS,N):
         makeFixedAdder(
             len(expC[0])
             ))
-    
-    #ly = split( reduce(lambda a,b:a+b, li),BlockSize)
+
+    # ly = split(reduce(lambda a,b:a+b,li),BlockSize)
     # this is essentially used to change the dimmentions of our matrix
     # so that the y_i values are lined up 
-    
+
     res = addReduce(li)
     del li
-   
+
     """
     ly = [sum(islice(li,BlockSize))          # 
           for i in range(alpha)]             # 
     """
-    
-    
-    
+
     print "*",
     #exit()
     #res = addReduce(ly)
     #del ly
     print "*",
-    print
+    print res[-1] + ( c & 1 )
+    exit
+    
     return res[1]+res[0] + c & 1
     
 
@@ -393,8 +393,8 @@ def go(secure,message):
     #def encryptSk(sk,pk,y,N):
     encS = encryptSk(S,pk,N)
     print "*",
-    
-    
+
+
     #def recrypt(c,y,encS,alpha,beta):
     cipher2 = map(lambda x: recrypt(x,y,encS,N),cipher)
 
