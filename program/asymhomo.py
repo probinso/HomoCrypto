@@ -328,19 +328,19 @@ def recrypt(c,y,encS,N):
     #print expC[0],
     #exit()
     print >> sys.stderr, "*"
-    
+
     assert(len(encS) == len(expC))
     # there is no reason that these should not be equivelent in length
-    
+
     print "Ready to multiply Accross encC and encS"
-    
-    
+
+
     """
     li = [map(lambda a: ski*a,cei) 
           for ski,cei in zip(encS,expC)]
     """
 
-    
+
     x = zip(encS,expC)
 
     addReduce = mplex(
