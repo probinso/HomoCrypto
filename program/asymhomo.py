@@ -9,6 +9,7 @@ from helpers import *
 
 from circuits import *
 
+
 debug=True
 
 #Asym PHE Helper Functions
@@ -66,7 +67,7 @@ def encrypt(message,pk,N):
 
     mn,mx = bitLims(-2*N)
 
-    cipher = [(2*(randomSubSetSum(pk)+(random.randrange(mn,mx)))+i)% pk[0] for i in message]
+    cipher = [( 2 * ( randomSubSetSum(pk) + randInt(-2*N) ) + i ) % pk[0] for i in message]
 
     #print "encrypted bits :: ",[x % 2 for x in cipher]
     return cipher
@@ -104,7 +105,10 @@ def getAlphaBeta(N):
         Dijk,Gentry,Halevi,Vaikuntanathan
     """
     
-    return (N,N**5) #int(((((N**6)+1)//2)*log(N,2))**6))
+    return (N,N*2)
+    #return (N,N**5) 
+    #return int(((((N**6)+1)//2)*log(N,2))**6))
+
 
 
 #Generates key pairs and hints
@@ -317,39 +321,73 @@ def recrypt(c,y,encS,N):
     alpha, beta = getAlphaBeta(N)
     BlockSize = beta // alpha
 
+    print "Ready to expand C"
     expC = expand(c,y)
+    print "Finished expanding C"
+
     #print expC[0],
     #exit()
-    print "*",
-    print len(encS),len(expC),len(y)
+    print >> sys.stderr, "*"
+    
     assert(len(encS) == len(expC))
     # there is no reason that these should not be equivelent in length
     
+    print "Ready to multiply Accross encC and encS"
     
+    
+    """
     li = [map(lambda a: ski*a,cei) 
           for ski,cei in zip(encS,expC)]
+    """
+
     
-    del expC
-    print "*",
+    x = zip(encS,expC)
 
     addReduce = mplex(
-        makeFixedAdder(
+        makeFixedAddr(
             len(expC[0])
             ))
+
+    del expC
+
+    li = []
+    while x:
+        ski,cei = x.pop()
+
+        li.append(MULTB(intToBinList(ski),cei))
+        print >>sys.stderr, "-",
+        del ski,cei 
+
+    """    
+    # The code above is used because we need to manage our memory
+    
+    li = [MULTB(intToBinList(ski),cei) for ski,cei in zip(encS,expC)]
+    """
+
+
+
+
+    print "Finished Multiply across encC and encS"
+    print "*"
+
 
     # ly = split(reduce(lambda a,b:a+b,li),BlockSize)
     # this is essentially used to change the dimmentions of our matrix
     # so that the y_i values are lined up 
 
+    print "Ready to add reduce",type(li),type(li[0]),type(li[0][0])
+    print li[0][0]
     res = addReduce(li)
     del li
-
+    print "Finished Add Reduce"
+    
     """
     ly = [sum(islice(li,BlockSize))          # 
           for i in range(alpha)]             # 
     """
 
     print "*",
+    
     #exit()
     #res = addReduce(ly)
     #del ly
@@ -377,6 +415,7 @@ def testPkRecrypt(secure,message):
 
 def go(secure,message):
     #
+    print "input mes ::",message
     N,P,Q = getNPQ(secure)
     (sk,S),(pk,y) = fheKeyGen(N)
 
@@ -392,7 +431,7 @@ def go(secure,message):
     #exit()
     #def encryptSk(sk,pk,y,N):
     encS = encryptSk(S,pk,N)
-    print "*",
+    print "finished encrypting S"
 
 
     #def recrypt(c,y,encS,alpha,beta):
@@ -421,3 +460,5 @@ def go(secure,message):
     #remess = map(int,fheDecrypt(cipher,S))
     #print "decrypt  :: ", remess
 
+
+go(8,[1])

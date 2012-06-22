@@ -209,80 +209,55 @@ def makeMult():
 MULT = makeMult()
 
 
+
 def makeMultB():
     def identTop(L1,L2):
         Top = L1 # multiplicand should be shorter
         Bot = L2 # multiplier   should be longer
-        if len(L1)>len(L2):
+        if len(Top)>len(Bot):
             Top,Bot = Bot,Top
         return Top,Bot
 
-    """
-    def Mult(L1,L2):
-        # This might be a minimal noise multiplier,
-        #   It may be possible to shrink noise by
-        #   adding opposing ends of the bitstream
-        #   but I am unsure of this.
-        Top,Bot = identTop(L1,L2)
-
-        Val = [cand([t]*len(Bot),Bot) for t in Top][::-1]
-        # the bits are reversed so that we can handle carying them better
-
-        tmp = []
-        if len(Val)%2 == 1:
-            tmp = Val[-1]
-            tmp = [tuple((tmp,[0]*len(tmp)))]
-        else:
-            tmp = []
-
-        i = 0
-
-        f = lambda (a,b): myadd(a,b+[0]*i)
-
-        while len(Val) != 1:
-            i+=1
-            Val = zip(Val[::2],Val[1::2]) + tmp
-
-            Val = map(f,Val)
-
-            if len(Val)%2 == 1:
-                tmp = Val[-1]
-                tmp = [tuple((tmp,[0]*len(tmp) ))]
-            else:
-                tmp = []
-        # I am getting one more bidget then I would like not sure
-        #   why, but multiplier works w/ positive integers
-        return Val[0]
-    """
-    
     tand = lambda (a,b): band(a,b)
     def Mult(L1,L2):
+        print >> sys.stderr, ":",
         # This might be a minimal noise multiplier,
         #   It may be possible to shrink noise by
         #   adding opposing ends of the bitstream
         #   but I am unsure of this.
         Top,Bot = identTop(L1,L2)
 
+        localAddr = makeFixedAddr(len(Bot)*2)
+
+        Top.reverse()
         Val = [ map(lambda x: band(t,x),Bot)+[0]*i for i,t in enumerate(Top) ]
+
+        del Top,Bot
+
         # the bits are reversed so that we can handle carying them better
 
         while True:
+
             acc = []
-            i = 0
-            if len(Val) == 1: return Val[0]
+            i = 1
+            if len(Val) == 1: return Val[0] 
+
             while len(Val) > 1:
-                if i % 2 == 0:
-                    acc.append(Add16(Val[0],Val[-1]))
-                else:
-                    acc.insert(0,(Add16(Val[0],Val[1])))
-                i+=1
+                A,B = Val[0],Val[-1]
                 Val = Val[1:-1]
-            i = 0
-            Val = acc
-            
+
+                if i % 2 == 1:
+                    acc.append(localAddr(A,B))
+                else:
+                    acc.insert(0,localAddr(A,B))
+
+                del A,B
+
+                i += 1
+
+            Val += acc
+
     return Mult
-
-
 
 
 MULTB = makeMultB()

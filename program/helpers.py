@@ -1,7 +1,7 @@
 from fractions import Fraction
 from math import ceil,log,copysign
 from random import randrange
-
+import sys 
 
 def intToBinList(i):
     # turns integer into binary list representation
