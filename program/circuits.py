@@ -7,18 +7,14 @@ This section is for trivial circuits
 def bnot(a):
     return 1-a
 
-
 def bxor(a,b):
     return a+b
-
 
 def band(a,b):
     return a*b
 
-
 def bnand(a,b):
     return bnot(band(a,b))
-
 
 def bor(a,b):
     #bnand(bnand(a,a),bnand(b,b))
@@ -33,23 +29,6 @@ def mplex(G):
     # a multiplexer for that gate
     tG = lambda (a,b): G(a,b)
 
-    """
-    def plex(L):
-        assert(len(L)>0)
-        if len(L) == 2: return G(L[0],L[1])
-        if len(L) == 1: return L[0]
-        A = L[:len(L)//2]
-        B = L[len(L)//2:]
-
-        C = zip(A,B)
-        out = map(tG,zip(A,B))
-
-        if len(A)!=len(B):
-            out.append(B[-1])
-            
-        return plex(out)
-    """
-    
     def plex(L):
         assert(len(L)>0)
         out = L
@@ -65,9 +44,7 @@ def mplex(G):
             if len(A)!=len(B):
                 out.append(B[-1])
             
-
     return plex
-
 
 mxor,mand,mnand,mor = [mplex(G) for G in [bxor,band,bnand,bor]]
 
@@ -123,7 +100,6 @@ def myadd(L1,L2):
 
    C = zip(L1,L2,C[1:])
    return map(lambda x: x[0]+x[1]+x[2],C)
-
 
 def makeFixedAddr(D):
     def carry(A,B,C):
