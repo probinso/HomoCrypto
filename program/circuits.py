@@ -196,23 +196,18 @@ def makeMultB():
 
     tand = lambda (a,b): band(a,b)
     def Mult(L1,L2):
-        print >> sys.stderr, "a",
+        
         # This might be a minimal noise multiplier,
         #   It may be possible to shrink noise by
         #   adding opposing ends of the bitstream
         #   but I am unsure of this.
         Top,Bot = identTop(L1,L2)
-        print >> sys.stderr, ":",
 
         localAddr = makeFixedAddr(len(Bot)*2)
-        print >> sys.stderr, ":",
 
         Top.reverse()
-        print >> sys.stderr, ":",
 
         Val = [ map(lambda x: band(t,x),Bot)+[0]*i for i,t in enumerate(Top) ]
-
-        print >> sys.stderr, ":",
 
         del Top,Bot
 
@@ -224,7 +219,6 @@ def makeMultB():
             i = 1
             if len(Val) == 1: return Val[0] 
             while len(Val) > 1:
-                print >> sys.stderr, ">",
                 A,B = Val[0],Val[-1]
                 Val = Val[1:-1]
 
