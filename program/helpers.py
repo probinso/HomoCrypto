@@ -7,6 +7,9 @@ def intToBinList(i):
     # turns integer into binary list representation
     return map(int,bin(i)[2:])
 
+def charToBin(c):
+    i = ord(c)
+    return ''.join('01'[(i >> x) & 1] for x in xrange(7, -1, -1))
 
 def binListToInt(l):
     # turns binary list into integer represenation
@@ -48,18 +51,7 @@ def mods(x,n):
 def parityList(L):
     return map(lambda x : int(x%2), L)
 
-
 def intListToBinList(string):
-    """
-    #takes a string and returns a list of binary representation of each letter
-    newlist =[]
-    word = list(string)
-    fixed = makeFixedWidthConverter(8)
-    for letter in word:
-        newlist.append(fixed(intToBinList(ord(letter))))
-    return reduce(lambda a,b: a+b,newlist)
-    #return newlist
-    """
     # takes in a string returns list of bits
     fixed = makeFixedWidthConverter(8)
     return sum(map(lambda x: 

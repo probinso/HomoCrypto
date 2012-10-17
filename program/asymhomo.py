@@ -4,13 +4,30 @@ from itertools import izip,islice
 from math import ceil,log
 from fractions import Fraction
 
-from homo import *
+#from homo import *
 from helpers import *
 
 from circuits import *
 
 
 debug=True
+
+
+def getNPQ(N):
+    # N is a security parameter
+    P = N**2
+    Q = N**3
+    return (N,P,Q)
+
+def genKey(P):
+    kn,kx = bitLims(P)
+    k = randint(kn,kx)
+    k = k-((k%2)-1)
+    return k
+
+
+
+
 
 #Asym PHE Helper Functions
 def privateKeyGen(P):
@@ -461,4 +478,4 @@ def go(secure,message):
     #print "decrypt  :: ", remess
 
 
-go(8,[1])
+go(12,[1])
