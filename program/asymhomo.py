@@ -3,15 +3,12 @@ import random
 from itertools import izip,islice
 from math import ceil,log
 from fractions import Fraction
+from random import randint,choice
 
-#from homo import *
 from helpers import *
-
 from circuits import *
 
-
 debug=True
-
 
 def getNPQ(N):
     # N is a security parameter
@@ -24,10 +21,6 @@ def genKey(P):
     k = randint(kn,kx)
     k = k-((k%2)-1)
     return k
-
-
-
-
 
 #Asym PHE Helper Functions
 def privateKeyGen(P):
@@ -86,7 +79,6 @@ def encrypt(message,pk,N):
 
     cipher = [( 2 * ( randomSubSetSum(pk) + randInt(-2*N) ) + i ) % pk[0] for i in message]
 
-    #print "encrypted bits :: ",[x % 2 for x in cipher]
     return cipher
 
 
@@ -122,7 +114,7 @@ def getAlphaBeta(N):
         Dijk,Gentry,Halevi,Vaikuntanathan
     """
     
-    return (N,N*2)
+    return (N,N**2)
     #return (N,N**5) 
     #return int(((((N**6)+1)//2)*log(N,2))**6))
 
@@ -176,7 +168,7 @@ def hintGen(f,alpha):
 
     SparseSubset = []
 
-    for i in range(alpha-1):
+    for i in xrange(alpha-1):
         x = F(f)
         SparseSubset.append(x)
         f = f - x
@@ -203,7 +195,6 @@ def garbageGen(beta,alpha):
                 )
             )
         
-
     return garbage
 
 
@@ -431,7 +422,7 @@ def testPkRecrypt(secure,message):
 
 
 def go(secure,message):
-    #
+    
     print "input mes ::",message
     N,P,Q = getNPQ(secure)
     (sk,S),(pk,y) = fheKeyGen(N)
@@ -444,11 +435,21 @@ def go(secure,message):
     cipher = encrypt(message,pk,N) #fheEncrypt(message,pk,y,N)
 
     print "encrypt  :: ", [ int(i % 2) for i in cipher ]
-    #print S
-    #exit()
-    #def encryptSk(sk,pk,y,N):
+
     encS = encryptSk(S,pk,N)
     print "finished encrypting S"
+
+
+    print len(S)
+    print len(y)
+    print len(encS)
+    
+    
+    
+    
+    exit()
+
+    
 
 
     #def recrypt(c,y,encS,alpha,beta):
